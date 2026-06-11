@@ -1,0 +1,18 @@
+---
+import ArchiveList from "./ArchiveList.astro";
+import { getPublishedPosts, type BlogPost } from "../lib/blog";
+
+interface Props {
+  posts?: BlogPost[];
+  currentSlug?: string;
+}
+
+const { currentSlug } = Astro.props;
+const posts = Astro.props.posts ?? (await getPublishedPosts());
+---
+
+<aside class="archive-sidebar" data-blog-archive aria-labelledby="archive-sidebar-heading">
+  <h2 id="archive-sidebar-heading" class="archive-sidebar-title">Archive</h2>
+  <p class="archive-sidebar-lead">All articles, grouped by year.</p>
+  <ArchiveList posts={posts} currentSlug={currentSlug} compact />
+</aside>

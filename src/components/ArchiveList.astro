@@ -1,0 +1,59 @@
+---
+import { BLOG_CATEGORIES, BLOG_TYPES, getMatchingGroupIds } from "../lib/blog-filters";
+import { groupPostsByYear, postHref, type BlogPost } from "../lib/blog";
+
+interface Props {
+  posts: BlogPost[];
+  currentSlug?: string;
+  compact?: boolean;
+}
+
+const { posts, currentSlug, compact = false } = Astro.props;
+const years = groupPostsByYear(posts);
+---
+
+<div class:list={["archive-list", compact && "archive-list--compact"]}>
+  {
+    years.map(({ year, posts: yearPosts }) => {
+      const openYear = currentSlug
+        ? yearPosts.some((post) => post.id === currentSlug)
+        : false;
+      return (
+      <details class="archive-year" open={openYear || undefined}>
+        <summary class="archive-year-title">{year}</summary>
+        <ul class="archive-year-posts">
+          {yearPosts.map((post) => (
+            <li
+              class="archive-post"
+              data-archive-post
+              data-tags={post.data.tags.join(",")}
+              data-types={getMatchingGroupIds(post.data.tags, BLOG_TYPES).join(",")}
+              data-categories={getMatchingGroupIds(post.data.tags, BLOG_CATEGORIES).join(",")}
+            >
+              <time
+                class="archive-post-date"
+                datetime={post.data.pubDate.toISOString()}
+              >
+                {post.data.pubDate.toLocaleDateString("en-US", {
+                  month: "short",
+                  day: "numeric",
+                })}
+              </time>
+              <a
+                href={postHref(post.id)}
+                class:list={[
+                  "archive-post-link",
+                  currentSlug === post.id && "archive-post-link--current",
+                ]}
+                aria-current={currentSlug === post.id ? "page" : undefined}
+              >
+                {post.data.title}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </details>
+      );
+    })
+  }
+</div>
