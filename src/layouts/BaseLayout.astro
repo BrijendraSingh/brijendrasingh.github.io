@@ -9,9 +9,10 @@ interface Props {
   title?: string;
   description?: string;
   type?: "website" | "article";
+  layout?: "default" | "article";
 }
 
-const { title, description, type } = Astro.props;
+const { title, description, type, layout = "default" } = Astro.props;
 ---
 
 <!doctype html>
@@ -29,9 +30,14 @@ const { title, description, type } = Astro.props;
     <title>{title ? `${title} | ${site.brand}` : site.brand}</title>
     <SEO title={title ?? site.brand} description={description ?? site.description} type={type} />
   </head>
-  <body class="flex min-h-screen flex-col">
+  <body class="site-shell">
     <Header />
-    <main class="mx-auto w-full max-w-5xl flex-1 px-4 py-10 sm:px-6">
+    <main
+      class:list={[
+        "site-main mx-auto w-full px-4 py-10 sm:px-6 lg:px-8",
+        layout === "article" ? "max-w-7xl" : "max-w-6xl",
+      ]}
+    >
       <slot />
     </main>
     <Footer />
