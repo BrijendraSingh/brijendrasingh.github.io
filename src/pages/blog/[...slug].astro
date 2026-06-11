@@ -1,6 +1,7 @@
 ---
 import { getCollection, render } from "astro:content";
 import PostLayout from "../../layouts/PostLayout.astro";
+import { estimateReadingTime } from "../../lib/blog";
 
 export async function getStaticPaths() {
   const posts = await getCollection("blog", ({ data }) => !data.draft);
@@ -18,19 +19,11 @@ const { Content } = await render(post);
   title={post.data.title}
   description={post.data.description}
   pubDate={post.data.pubDate}
+  updatedDate={post.data.updatedDate}
   tags={post.data.tags}
   slug={post.id}
   commentsDisable={post.data.commentsDisable}
+  readingTime={estimateReadingTime(post.body ?? "")}
 >
-  {
-    post.data.heroImage && (
-      <img
-        src={post.data.heroImage}
-        alt=""
-        class="mb-8 w-full rounded-lg object-cover"
-        loading="lazy"
-      />
-    )
-  }
   <Content />
 </PostLayout>

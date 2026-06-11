@@ -1,33 +1,74 @@
 ---
 import BaseLayout from "./BaseLayout.astro";
+import ArchiveSidebar from "../components/ArchiveSidebar.astro";
 import PostMeta from "../components/PostMeta.astro";
+import PostSidebar from "../components/PostSidebar.astro";
 import DisqusComments from "../components/DisqusComments.astro";
+import { getPublishedPosts } from "../lib/blog";
 
 interface Props {
   title: string;
   description: string;
   pubDate: Date;
+  updatedDate?: Date;
   tags?: string[];
   slug: string;
   commentsDisable?: boolean;
+  readingTime?: number;
 }
 
-const { title, description, pubDate, tags = [], slug, commentsDisable = false } = Astro.props;
+const {
+  title,
+  description,
+  pubDate,
+  updatedDate,
+  tags = [],
+  slug,
+  commentsDisable = false,
+  readingTime,
+} = Astro.props;
+
+const posts = await getPublishedPosts();
 ---
 
-<BaseLayout title={title} description={description} type="article">
-  <article>
-    <header class="mb-8 border-b border-slate-200 pb-6">
-      <h1 class="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
-        {title}
-      </h1>
-      <div class="mt-4">
-        <PostMeta pubDate={pubDate} tags={tags} />
+<BaseLayout title={title} description={description} type="article" layout="article">
+  <article class="post-article">
+    <nav class="post-mobile-nav lg:hidden" aria-label="Blog navigation">
+      <a href="/blog/" class="post-sidebar-back">← All articles</a>
+    </nav>
+    <div class="post-layout">
+      <div class="post-meta-column">
+        <PostSidebar
+          pubDate={pubDate}
+          updatedDate={updatedDate}
+          tags={tags}
+          readingTime={readingTime}
+        />
       </div>
-    </header>
-    <div class="prose-content">
-      <slot />
+
+      <div class="post-primary">
+        <header class="post-header">
+          <h1 class="post-title">{title}</h1>
+          <div class="post-header-meta lg:hidden">
+            <PostMeta pubDate={pubDate} tags={tags} />
+          </div>
+        </header>
+
+        <div class="post-main">
+          <div class="prose-content">
+            <slot />
+          </div>
+          {!commentsDisable && <DisqusComments slug={slug} />}
+        </div>
+      </div>
+
+      <div class="post-sidebar-column">
+        <ArchiveSidebar posts={posts} currentSlug={slug} />
+      </div>
     </div>
-    {!commentsDisable && <DisqusComments slug={slug} />}
+
+    <div class="post-archive-mobile">
+      <ArchiveSidebar posts={posts} currentSlug={slug} />
+    </div>
   </article>
 </BaseLayout>
