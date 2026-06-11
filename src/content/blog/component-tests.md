@@ -1,75 +1,126 @@
 ---
 title: "End to End Testing using component strategy"
-description: "Component Testing"
+description: "Split E2E coverage across aggregation, API, and UI components for faster feedback, fewer flaky tests, and clearer failure analysis."
 pubDate: 2021-12-10
-tags: ["test-pyramid","component-test"]
+updatedDate: 2026-06-11
+tags: ["test-pyramid", "component-test", "test-strategy"]
 draft: false
 heroImage: "/images/blog/post_pic_component_test.jpg"
 ---
 
-> `Component Testing` is an approach where we divide the automated test in applicable layer and target specific responsibilty of various components to reduce software components `interdependencies`, `time` and logic `complexcity`.
+> Component Testing is an approach where we divide automated tests into applicable layers and target specific responsibilities of various components — to reduce interdependencies, execution time, and logic complexity.
 
-This can be beter understood with Test Pyramid approach.
-<figure>
-	<a href="https://user-images.githubusercontent.com/19272137/140619113-02b42a32-ca5f-4149-bad4-86c6d20dc1b3.png"><img src="https://user-images.githubusercontent.com/19272137/140619113-02b42a32-ca5f-4149-bad4-86c6d20dc1b3.png"></a>
-</figure>
+If every business rule lives in a single UI journey, one slow warehouse query or one batch job running late turns your "E2E" into a lottery. Component strategy breaks the monolith **in your test design**, not necessarily in your architecture.
 
-### Usual practice
-<figure>
-	<a href="https://user-images.githubusercontent.com/19272137/140619562-209459dc-baf5-457d-852c-f79b564fbf51.png"><img src="https://user-images.githubusercontent.com/19272137/140619562-209459dc-baf5-457d-852c-f79b564fbf51.png"></a>
-</figure>
+This pairs naturally with the [test pyramid](/blog/art-of-automation/). Below is how I apply it on real systems.
 
-We have observed a pattern of writing End to End Automated test by only targetting GUI to validate the complete business logic. 
-This approach can work if
-- backend service is very simple and not much business logic and flows are involved
-- basic data repository with select data sets
+![Component testing and the test pyramid](/images/blog/component-tests-pyramid.png)
 
-However, I wont recommend this way of writing End End Test targeting complete business logic on UI layer.
+## The usual practice — and why it hurts
 
-### Component approach
-We should first understand the application component responsibilites and then breakdown the business logic to its parts. This will help us to write more effective E2Es.
-This will hellp us to
-- Reduce the flacky tests.
-- Drastically reduce the feedback time.
-- Accurate e2e failure Analysis to find out the application flawd area.
+![UI-only E2E pattern](/images/blog/component-tests-usual-practice.png)
 
-Lets take an example and breakdown the components
-Below are the suggested component based on below example. Complete business logic is broken down to 2 parts.
-<figure>
-	<a href="https://user-images.githubusercontent.com/19272137/140618659-9edba9f8-2e68-47a1-bba3-9b045b6c12cb.png"><img src="https://user-images.githubusercontent.com/19272137/140618659-9edba9f8-2e68-47a1-bba3-9b045b6c12cb.png"></a>
-</figure>
+We have observed a pattern: teams write end-to-end automated tests by **only** targeting the GUI to validate complete business logic.
 
-**Business logic 1** : Data Aggregation/batch logic
-- Aggregation component test
+This approach can work when:
 
-**Business logic 2** : Application service logic
-- API Component test
-- UI component test and
-- Finally the System Test
-- Lets put some light on these component test
+- The backend is very simple with little business logic
+- Data is a basic repository with small, stable datasets
+- Releases are infrequent and the suite stays small
 
-#### lets dig deep in each component layer.
+Otherwise, I do not recommend validating complete business logic on the UI layer alone. YOU pay in minutes per run, flaky failures, and RCA sessions that end with "the batch was still running."
 
-**Data aggregation/batch component test** 
-If your application involves Data aggregation or batch data processing then its become important to test the aggregation/batch business logic in this layer only.
-reason:
-- Testing this logic on UI E2E will consume unexpectedly longer time to retrieve data from data warehouse
-- Also, an aggregation/batch execution dependency is also added here which may cause test failure when components are not in sync
+**Before / after snapshot**
 
-**UI Component test** 
-We may not always have control on our application test data, this may lead to added trouble of creating and maintaining Test data specific to the business case and its corresponding edge and corner cases.
-- We can always take control over API responses and fed GUI the mock data/response which can be used to validate specific business case and its reflection to GUI.
-- This way we can cut off backend dependency and make UI E2E more robust and reliable
+| UI-only E2E | Component approach |
+|-------------|-------------------|
+| One 12-minute test per scenario | Aggregation test ~30s, API test ~5s, UI smoke ~90s |
+| Failure: "checkout broken" | Failure: "pricing API returned 409" |
+| Blocked when warehouse lags | UI tests use mocked API responses |
 
-**API Component test** 
-Lets take an example of login feature. its not a best practice of testing every login combination on UI layer
-- We can have bare minimum test on UI E2E and rest of the login logic can be tested on API layer
-- We can also test Authorization and Role based access and negaive condition on API Test layer
-- This will cut off the UI dependency while validating business logic and hence improving test coverage with minimum execution and less invalid test failures
+## Component approach — break down the logic first
 
-**System test** 
-So far we have tested application on it varuous component level. System test can be used to test the complete Integration (If posible) front end and ba
-ckend logic In this layer we should have least numner of automated test covering only the haapy criticle path
+Understand application component responsibilities, then break business logic into parts. That helps YOU write more effective E2Es.
 
-> happy testing :)
+Benefits:
 
+- Reduce flaky tests
+- Drastically reduce feedback time
+- Accurate failure analysis — pinpoint the flawed area
+
+![Business logic split across components](/images/blog/component-tests-breakdown.png)
+
+**Business logic 1:** Data aggregation / batch logic → aggregation component tests
+
+**Business logic 2:** Application service logic → API component tests, UI component tests, then system tests
+
+Lets dig into each layer with examples.
+
+### Data aggregation / batch component tests
+
+If your application involves aggregation or batch processing, test that logic **in this layer only**.
+
+**Why not on UI E2E?**
+
+- Warehouse pulls can take unpredictably long
+- Batch schedules add coupling — tests fail when components are out of sync, not when logic is wrong
+
+**Example:** A nightly sales rollup reads 40 tables. A component test feeds a **fixed fixture** of orders and asserts the rollup table — no browser, no cron wait. When the rollup rule changes, YOU know in seconds.
+
+### API component tests
+
+Take login — it is not best practice to test every login combination on the UI.
+
+- Bare minimum happy path on UI E2E
+- Invalid credentials, lockout, password expiry, and role-based access on the API layer
+- Negative authorization cases without spinning up a browser per variant
+
+**Example scenario:** Ten roles × five protected endpoints = fifty API checks. One UI test confirms a standard user sees the dashboard. The API suite catches a missing 403 before QA spends an afternoon clicking menus.
+
+Cut UI dependency, improve coverage, fewer invalid failures.
+
+### UI component tests — control the data
+
+We may not always control application test data. That creates trouble maintaining datasets for every edge case.
+
+- Mock or stub API responses fed to the GUI
+- Validate specific business cases and their reflection in the UI
+- Cut backend dependency; make UI tests robust
+
+**Example:** Test "out of stock" banner by returning `{ "stock": 0 }` from a stubbed catalog API — no need to drain inventory in a shared QA database that three other teams use.
+
+### System tests — happy critical paths only
+
+By now YOU have tested at various component levels. System tests prove **integration** — frontend and backend wired together.
+
+Keep the count low. Cover happy critical paths only: place order, register user, submit claim. If a system test fails, component suites should already narrow the blast radius.
+
+```mermaid
+flowchart LR
+  batch[Batch / aggregation tests]
+  api[API component tests]
+  ui[UI component tests with mocks]
+  system[System E2E — critical paths]
+  batch --> api --> ui --> system
+```
+
+## Putting it together on one feature
+
+Imagine **refund processing**:
+
+1. **Batch layer** — settlement file produces refundable rows (fixture input, assert output file)
+2. **API layer** — POST `/refunds` with valid, invalid, and duplicate IDs
+3. **UI layer** — refund button disabled when API returns `ineligible` (mocked)
+4. **System** — one journey: user requests refund, sees confirmation email trigger
+
+Four layers, one feature, no twelve-minute UI marathon.
+
+## When microservices enter the picture
+
+Component boundaries often map to services. The same split applies — see [Microservices Test Strategy](/blog/testing-microservices/) for how contract tests and environments fit in.
+
+## Your turn
+
+Pick one flaky UI test on YOUR project. Which layer could own the assertion instead? Start there; do not rewrite the world in a sprint.
+
+> Happy Testing :)

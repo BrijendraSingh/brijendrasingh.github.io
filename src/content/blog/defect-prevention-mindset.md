@@ -1,71 +1,131 @@
 ---
 title: "Keys to become an effective QA"
-description: "Prevention is better than cure!"
+description: "Shift QA from defect detection to prevention — STORY KICKOFF, devbox, bug bash, and the 80-20 split that keeps releases on schedule."
 pubDate: 2022-05-25
-tags: ["test-pyramid","component-test","test-strategy"]
+updatedDate: 2026-06-11
+tags: ["test-pyramid", "component-test", "test-strategy"]
 draft: false
 heroImage: "/images/blog/defects-prev.jpg"
 ---
 
-> `Prevention is better than cure!` 
-> 
-> let's find out how shifting `QA mindset` from defect `detection` to defect `Prevention` can help YOUR team achieve goals without causing testing bottlenecks. 
+> Prevention is better than cure!
+>
+> Lets find out how shifting QA mindset from defect **detection** to defect **prevention** can help YOUR team achieve goals without causing testing bottlenecks.
 
-## Why to avoid defect detection
-Finding and fixing defects provides the software team boost of confidence to go ahead with production release. However, finding defects in later stages of software development life cycle (SDLC) may cause delay in time to production. This can also be the reason for some compromises with quality. Defects might need to be deprioritized so that the team can perform release on time.
+## Why avoid late defect detection
 
-Let's recall the SDLC flow.
-> - Requirement Gathering and Analysis
+Finding and fixing defects gives the team confidence to release. But finding defects in later SDLC stages delays production. Teams compromise on quality — defects get deprioritized so the release ships on time.
+
+Recall the SDLC flow:
+
+> - Requirement gathering and analysis
 > - Development
 > - Testing
 > - Deployment
 
-We will figure out together what may go wrong, if we go ahead with a mindset of finding defects post feature deployment to the dev/QA environment. 
-- RCA concluded to be a requirement change
-- Unit/Integration tests were missing or wrongly validated for that module 
-- e2e/Regression suites needs to be updated to accommodate possible fix in feature
-- Retesting and small regression around that feature is required
+What goes wrong when we only hunt defects **after** deployment to dev/QA?
 
-Considering the above points
-- Development team may have to re-think the feature and rework on Analysis and Development
-- It may be difficult to find the devs who might have developed the feature/story. They might have a new story to work upon. They may also take up some time to switch between the stories and tasks.
-- If a new dev signs up for it then context sharing will be required.
-- The same Development-QA cycle will start. 
+- RCA points to a requirement gap that should have been caught in refinement
+- Unit or integration tests were missing or wrong for that module
+- E2E/regression suites need updates for the fix
+- Retesting and focused regression around the feature
 
-I am now looking at those above points a bit more seriously. Few gaps come to my mind.
-- QAs were not involved in requirement/feature refinement and consultation: If done so posible requirement defects detected post development might have been solved earlier
-- `Test pyramid` is not effectively followed. Edge cases and data critical scenarios were missed. YOU (devs/QAs) should have written/validated tests on  Unit/Integration test layers. This would have reduced defects to be slipped on later stages of SDLC.
-- Overall development and testing `re-work` would have been avoided.
+**Cascade effect:**
 
-## How to focus more on Defect Prevention 
-QAs should perform Quality checks right from the `beginning` of Requirement gathering and refinement. QAs should wear an `end user` hat and should `consult` on how they would imagine a feature to be. What might help them and what may cause confusion or might not work.
-Once a feature is well groomed and ACs are finalized it becomes very rare to find any issue related to this on later stages of SDLC.
+- Development re-thinks the feature — analysis and coding rework
+- Original devs may be on new stories; context switching costs time
+- A new dev needs context sharing
+- The same dev–QA cycle starts again
 
-QAs along with BA and dev should clear out things and agree on the ACs and tech approach `before` devs pick up the story for development. YOU can call this check as `STORY KICKOFF`. 
+I take those points seriously. Gaps I see repeatedly:
 
-Next stage for QAs to be `continuously` involved with developers while they are working on the story to ensure they are following the
-- good code quality: code should be clear enough for others so that future modifications can be made easily.
-- code/framework should be capable enough to accomodate any future enhancements 
-- unit/integration test coverage: QAs should not only focus on code coverage overall %. Sometimes data permutation and combination on the same code can cause issues on feature. 
-- Look for an opportunity where you can pick up the `early validation` for fast feedback.
+- QAs were not in requirement refinement — requirement defects surface post-development
+- [Test pyramid](/blog/art-of-automation/) not followed — edge cases missed at unit/integration layers
+- Rework on development and testing that could have been avoided
 
-Once dev work is done and ready to be deployed YOU all three (QAs, BAs and Devs) should come together. In this connection you all go through the ACs and validate the feature. Here it becomes very easy to accommodate any feedback and validate the outcome to finalize the decision and approach. You can call this connection as `devbox`. I have seen people using other names as well like `desk check` and `volleyball` for this kind of connect and precheck.
+**Mini scenario — late surprise:** A "simple" export feature ships. QA finds the CSV encoding breaks for European customers. Refinement never discussed locales. Two sprints of rework. A 45-minute **STORY KICKOFF** with a sample file would have surfaced it.
 
-Once all satisfied, dev changes are now ready to be deployed on env and becomes ready for you (QAs) for the exploratory testing.
-- filter out what really is needed to be part of Automated UI end to end test suites. YOU should not cover everything on this layer.
-- Take leverage of API tests and validate various business use cases in this layer.
+## How to focus on defect prevention
 
-Now you can try to imagine the confidence level over the feature. QAs effort will be reduced drastically and you will get ample amount of time to break the application on edge cases.
+QAs should perform quality checks from the **beginning** of requirement gathering. Wear the **end user** hat. Consult on how the feature should behave — what helps, what confuses, what will not work.
 
-There is one more thing you can try out before regression testing. Before Regression, bring up everyone from the team and ask them to test the application for any possible defects or break it all together. We call it Bug bash and trust me , it will work wonders to find out issues that would not have been discovered by any other means.
+When a feature is well groomed and acceptance criteria are finalized, requirement-related issues in later SDLC stages become rare.
 
-![defect-prevention](https://user-images.githubusercontent.com/19272137/170416790-9ca64642-d90f-4845-927d-0c2ccec23c68.jpg)
+### STORY KICKOFF — before code starts
 
-> Its not like Defect detection is all bad and you should stop doing it. I am telling you to focus more on Defect prevention rather than detection. I personally follow the 80-20 split. where 80% of my effort goes to defect prevention and only 20% to defect detection (exploratory testing and bug bash).
-> These things have helped me and my peers to avoid testing bottlenecks and a lot of teams rework. It also helped us to stick on our timeline and deliver the release on scheduled time. 
+QAs, BA, and dev clear things and agree on ACs and tech approach **before** dev picks up the story. Call it **STORY KICKOFF** (or three-amigos — name matters less than the habit).
 
-> What do you think about this? Did this writeup help you to change your perspective on testing ? 
-    
+**YOU cover:**
+
+- Happy path and edge cases in plain language
+- Test data needs and environment assumptions
+- Which checks belong in unit, API, and UI layers ([component strategy](/blog/component-tests/))
+- Non-functional expectations: performance, accessibility, security
+
+**Outcome:** Devs build with tests in mind; QAs are not surprised on day five of a five-day story.
+
+### Pair during development — early validation
+
+Stay involved while devs work:
+
+- **Code quality** — clear enough for future change
+- **Framework fit** — room for enhancements without rewrite
+- **Unit/integration coverage** — not only coverage %; data permutations on the same code path cause real bugs
+- **Early validation** — demo a stub, run an API test together, validate a state machine on paper
+
+### Devbox — desk check before QA env
+
+When dev work is ready, QAs, BAs, and devs meet. Walk ACs together. Validate the outcome. Feedback is cheap here.
+
+Call it **devbox**, desk check, or volleyball — the pattern is the same: short, focused, on the developer machine or feature branch.
+
+**Mini scenario — devbox win:** Payment story shows success toast but ledger entry is wrong. Caught in devbox in ten minutes. Without it, the bug waits for env deploy, test data setup, and a formal QA pass — same fix, 10× the calendar cost.
+
+### Exploratory testing — with a lighter automation load
+
+After deploy to QA:
+
+- Filter what truly belongs in automated UI E2E — not everything
+- Use API tests for business use cases ([pyramid guidance](/blog/art-of-automation/))
+- Spend exploratory time on edge cases automation missed
+
+Confidence goes up; effort on repetitive checking goes down.
+
+### Bug bash — before regression
+
+Before full regression, bring the team to **break the app together**. Bug bash finds issues no scripted path would hit — odd device settings, chaotic navigation, "what if I click this twice."
+
+Trust me, it works.
+
+![Defect prevention mindset across the SDLC](/images/blog/defect-prevention-flow.jpg)
+
+## The 80-20 split
+
+Defect detection is not bad — YOU should not stop doing it. Focus more on **prevention** than detection.
+
+I follow an **80-20 split**: ~80% of effort on prevention (refinement, kickoff, devbox, lower-layer tests), ~20% on detection (exploratory testing, bug bash).
+
+That ratio helped my teams avoid testing bottlenecks and rework. We stuck to timelines and shipped on schedule more often.
+
+```mermaid
+flowchart LR
+  prevent[Prevention 80% — kickoff devbox pyramid]
+  detect[Detection 20% — explore bash]
+  prevent --> release[On-time release with confidence]
+  detect --> release
+```
+
+## Checklist for YOUR next story
+
+- [ ] QA attended refinement or kickoff
+- [ ] ACs testable and agreed in writing
+- [ ] Layer ownership clear (unit / API / UI)
+- [ ] Devbox done before formal QA handoff
+- [ ] UI E2E list trimmed to critical journeys
+- [ ] Bug bash scheduled before regression crunch
+
+## What do you think?
+
+Did this change how YOU see testing — hunter vs guardrail builder? Which ritual would help your team most this sprint?
+
 > Happy Testing :)
-
-

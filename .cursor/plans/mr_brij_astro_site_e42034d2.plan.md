@@ -22,7 +22,7 @@ todos:
     status: completed
   - id: polish-launch
     content: Lighthouse audit, link check, README with blog publishing guide, remove old Jekyll files, user fills resume placeholders
-    status: in_progress
+    status: completed
 isProject: false
 ---
 

@@ -38,5 +38,17 @@
     ],
     "match_confidence": "high",
     "user_satisfaction_signals": "unknown"
+  },
+  {
+    "timestamp": "2026-06-11T19:55:00Z",
+    "query_summary": "Mature rewrite of all 9 legacy blog posts with examples, local images, and completed WIP stubs",
+    "skills_triggered": [
+      "mr-brij-orchestrator",
+      "mr-brij-blog-publisher",
+      "mr-brij-brand-guide",
+      "jekyll-to-astro-migration"
+    ],
+    "match_confidence": "high",
+    "user_satisfaction_signals": "unknown"
   }
 ]
