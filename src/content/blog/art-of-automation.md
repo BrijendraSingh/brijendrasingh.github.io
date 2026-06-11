@@ -5,7 +5,6 @@ pubDate: 2021-11-22
 updatedDate: 2026-06-11
 tags: ["test-pyramid", "component-test", "test-automation"]
 draft: false
-heroImage: "/images/blog/post_pic_art_automation.jpg"
 ---
 
 > We cannot test everything — and we should not try to test everything on the UI automation layer. Variety of test layers exist where documented tests can be divided. This helps us reduce execution time, increase fast feedback, and shift left as a side effect.

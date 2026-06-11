@@ -5,7 +5,6 @@ pubDate: 2022-05-07
 updatedDate: 2026-06-11
 tags: ["mobile-test-strategy", "mobile-testing", "mobile-automation"]
 draft: false
-heroImage: "/images/blog/post_pic_mobile_strategy.jpg"
 ---
 
 > How do we build a mobile test strategy that covers device-specific conditions, device selection, and tool selection — **for this app**, not for a generic slide deck?

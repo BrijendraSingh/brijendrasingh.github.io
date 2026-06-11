@@ -5,7 +5,6 @@ pubDate: 2022-05-25
 updatedDate: 2026-06-11
 tags: ["test-pyramid", "component-test", "test-strategy"]
 draft: false
-heroImage: "/images/blog/defects-prev.jpg"
 ---
 
 > Prevention is better than cure!

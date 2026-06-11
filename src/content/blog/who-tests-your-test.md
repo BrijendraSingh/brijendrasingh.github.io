@@ -5,7 +5,6 @@ pubDate: 2022-02-02
 updatedDate: 2026-06-11
 tags: ["test-automation", "flaky-test", "quality-culture"]
 draft: false
-heroImage: "/images/blog/post_pic_who_tests.png"
 ---
 
 > DO YOU FEEL COMFORTABLE UPDATING YOUR TESTS?

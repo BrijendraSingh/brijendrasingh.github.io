@@ -5,7 +5,6 @@ pubDate: 2021-12-10
 updatedDate: 2026-06-11
 tags: ["test-pyramid", "component-test", "test-strategy"]
 draft: false
-heroImage: "/images/blog/post_pic_component_test.jpg"
 ---
 
 > Component Testing is an approach where we divide automated tests into applicable layers and target specific responsibilities of various components — to reduce interdependencies, execution time, and logic complexity.

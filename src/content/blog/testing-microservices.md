@@ -5,7 +5,6 @@ pubDate: 2022-05-11
 updatedDate: 2026-06-11
 tags: ["test-pyramid", "component-test", "microservices", "api-automation", "contract-test"]
 draft: false
-heroImage: "/images/blog/post_pic_micro_test_strategy.png"
 ---
 
 > Testing microservices is not easy when the number of services keeps increasing over time. Complexity grows — database errors, network latency, caching issues, service unavailability. Multiple teams building interconnected services add another layer of chaos.

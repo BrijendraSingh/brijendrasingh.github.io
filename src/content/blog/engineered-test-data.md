@@ -5,7 +5,6 @@ pubDate: 2021-11-07
 updatedDate: 2026-06-11
 tags: ["engineered-test-data", "test-data", "software-quality"]
 draft: false
-heroImage: "/images/blog/post_pic3.jpg"
 ---
 
 > What is one important factor in a project's success? If you are a QA, your answer might be testing — but what makes testing **good**? Answers vary, yet one thing most of us relate to is **good test data**.

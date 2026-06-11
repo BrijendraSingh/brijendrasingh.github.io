@@ -5,7 +5,6 @@ pubDate: 2022-04-27
 updatedDate: 2026-06-11
 tags: ["test-pyramid", "component-test", "detox", "mobile-automation"]
 draft: false
-heroImage: "/images/blog/post_pic_detox.jpg"
 ---
 
 > Tired of maintaining two locator sets for iOS and Android? Still inspecting mobile objects like it is 2015? **Detox** is a gray-box E2E solution that helps YOU shift left — run tests soon after a developer changes a feature, close to unit and integration tests.
