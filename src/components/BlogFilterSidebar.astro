@@ -1,0 +1,196 @@
+---
+import {
+  BLOG_CATEGORIES,
+  BLOG_TYPES,
+  getTopicFilters,
+  groupsWithPosts,
+} from "../lib/blog-filters";
+import type { BlogPost } from "../lib/blog";
+
+interface Props {
+  posts: BlogPost[];
+}
+
+const { posts } = Astro.props;
+
+const types = groupsWithPosts(posts, BLOG_TYPES);
+const categories = groupsWithPosts(posts, BLOG_CATEGORIES);
+const topics = getTopicFilters(posts);
+---
+
+<aside class="blog-filter-sidebar" aria-label="Filter articles">
+  <div class="blog-filter-header">
+    <h2 class="blog-filter-title">Filter</h2>
+    <button type="button" class="blog-filter-clear" data-filter-clear hidden>
+      Clear all
+    </button>
+  </div>
+
+  {
+    types.length > 0 && (
+      <details class="blog-filter-group" data-filter-group="type">
+        <summary class="blog-filter-legend">Blog type</summary>
+        <ul class="blog-filter-list">
+          {types.map((item) => (
+            <li>
+              <label class="blog-filter-label">
+                <input
+                  type="checkbox"
+                  class="blog-filter-input"
+                  name="type"
+                  value={item.id}
+                  data-filter-group="type"
+                />
+                <span>{item.label}</span>
+              </label>
+            </li>
+          ))}
+        </ul>
+      </details>
+    )
+  }
+
+  {
+    categories.length > 0 && (
+      <details class="blog-filter-group" data-filter-group="category">
+        <summary class="blog-filter-legend">Category</summary>
+        <ul class="blog-filter-list">
+          {categories.map((item) => (
+            <li>
+              <label class="blog-filter-label">
+                <input
+                  type="checkbox"
+                  class="blog-filter-input"
+                  name="category"
+                  value={item.id}
+                  data-filter-group="category"
+                />
+                <span>{item.label}</span>
+              </label>
+            </li>
+          ))}
+        </ul>
+      </details>
+    )
+  }
+
+  {
+    topics.length > 0 && (
+      <details class="blog-filter-group" data-filter-group="topic">
+        <summary class="blog-filter-legend">Topics</summary>
+        <ul class="blog-filter-list">
+          {topics.map((item) => (
+            <li>
+              <label class="blog-filter-label">
+                <input
+                  type="checkbox"
+                  class="blog-filter-input"
+                  name="topic"
+                  value={item.id}
+                  data-filter-group="topic"
+                />
+                <span>{item.label}</span>
+              </label>
+            </li>
+          ))}
+        </ul>
+      </details>
+    )
+  }
+
+  <p class="blog-filter-results" data-filter-results aria-live="polite" />
+</aside>
+
+<script>
+  function initBlogFilters() {
+    const feed = document.querySelector<HTMLElement>("[data-blog-feed]");
+    const clearBtn = document.querySelector<HTMLButtonElement>("[data-filter-clear]");
+    const resultsEl = document.querySelector<HTMLElement>("[data-filter-results]");
+    const inputs = document.querySelectorAll<HTMLInputElement>(".blog-filter-input");
+
+    if (!feed) return;
+
+    const items = () =>
+      document.querySelectorAll<HTMLElement>("[data-blog-filter-item], [data-archive-post]");
+
+    function selected(name: string) {
+      return [...document.querySelectorAll<HTMLInputElement>(`input[name="${name}"]:checked`)].map(
+        (el) => el.value,
+      );
+    }
+
+    function matches(el: HTMLElement) {
+      const types = selected("type");
+      const categories = selected("category");
+      const topics = selected("topic");
+      const itemTypes = (el.dataset.types ?? "").split(",").filter(Boolean);
+      const itemCategories = (el.dataset.categories ?? "").split(",").filter(Boolean);
+      const itemTopics = (el.dataset.tags ?? "").split(",").filter(Boolean);
+
+      if (types.length && !types.some((id) => itemTypes.includes(id))) return false;
+      if (categories.length && !categories.some((id) => itemCategories.includes(id))) return false;
+      if (topics.length && !topics.some((id) => itemTopics.includes(id))) return false;
+      return true;
+    }
+
+    function applyFilters() {
+      const hasFilters =
+        selected("type").length > 0 ||
+        selected("category").length > 0 ||
+        selected("topic").length > 0;
+
+      items().forEach((el) => {
+        el.hidden = !matches(el);
+      });
+
+      const visibleFeed = [...feed.querySelectorAll<HTMLElement>("[data-blog-filter-item]")].filter(
+        (el) => !el.hidden,
+      ).length;
+
+      feed.querySelector<HTMLElement>("[data-blog-empty]")?.toggleAttribute(
+        "hidden",
+        visibleFeed > 0 || !hasFilters,
+      );
+
+      if (clearBtn) clearBtn.hidden = !hasFilters;
+
+      document.querySelectorAll<HTMLDetailsElement>(".blog-filter-group").forEach((group) => {
+        const hasChecked = group.querySelector("input:checked");
+        if (hasChecked) group.open = true;
+      });
+
+      document.querySelectorAll<HTMLDetailsElement>(".archive-year").forEach((section) => {
+        const posts = section.querySelectorAll<HTMLElement>("[data-archive-post]");
+        const anyVisible = [...posts].some((post) => !post.hidden);
+        section.hidden = !anyVisible && hasFilters;
+        if (hasFilters && anyVisible) section.open = true;
+      });
+
+      if (resultsEl) {
+        if (!hasFilters) {
+          resultsEl.textContent = "";
+        } else {
+          const feedCount = feed.querySelectorAll<HTMLElement>("[data-blog-filter-item]").length;
+          resultsEl.textContent =
+            visibleFeed === 0
+              ? "No articles match these filters."
+              : `Showing ${visibleFeed} of ${feedCount} articles`;
+        }
+      }
+    }
+
+    inputs.forEach((input) => input.addEventListener("change", applyFilters));
+
+    clearBtn?.addEventListener("click", () => {
+      inputs.forEach((input) => {
+        input.checked = false;
+      });
+      applyFilters();
+    });
+
+    applyFilters();
+  }
+
+  initBlogFilters();
+  document.addEventListener("astro:page-load", initBlogFilters);
+</script>

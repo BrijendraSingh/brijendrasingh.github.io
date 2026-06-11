@@ -1,64 +1,89 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
-import BlogCard from "../components/BlogCard.astro";
+import ArchiveSidebar from "../components/ArchiveSidebar.astro";
+import BlogListItem from "../components/BlogListItem.astro";
 import DisqusCountScript from "../components/DisqusCountScript.astro";
 import { site } from "../config/site";
-import { getPublishedPosts, postHref } from "../lib/blog";
+import { getPublishedPosts, postHref, estimateReadingTime } from "../lib/blog";
 
-const latestPosts = (await getPublishedPosts()).slice(0, 3);
+const posts = await getPublishedPosts();
+const latestPosts = posts.slice(0, 3);
 ---
 
-<BaseLayout>
-  <section class="py-6">
-    <p class="text-sm font-medium uppercase tracking-wide text-blue-700">
-      {site.tagline}
-    </p>
-    <h1 class="mt-2 text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl">
-      {site.name}
-    </h1>
-    <p class="mt-4 max-w-2xl text-lg text-slate-600">
-      {site.description} I write about test strategy, automation, and building quality
-      into software teams.
-    </p>
-    <div class="mt-8 flex flex-wrap gap-4">
-      <a
-        href="/blog/"
-        class="rounded-lg bg-blue-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-blue-800"
-      >
-        Read the blog
-      </a>
-      <a
-        href="/resume/"
-        class="rounded-lg border border-slate-300 bg-white px-5 py-2.5 text-sm font-medium text-slate-700 hover:border-blue-300 hover:text-blue-700"
-      >
-        View resume
-      </a>
-    </div>
-  </section>
+<BaseLayout layout="article">
+  <div class="home-page">
+    <div class="blog-layout">
+      <div class="blog-primary">
+        <section class="py-6">
+          <p class="text-sm font-medium uppercase tracking-wide text-blue-700">
+            {site.tagline}
+          </p>
+          <h1 class="mt-2 text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl">
+            {site.name}
+          </h1>
+          <p class="mt-4 max-w-2xl text-lg text-slate-600">
+            {site.description} I write about test strategy, automation, and building quality
+            into software teams.
+          </p>
+          <div class="mt-8 flex flex-wrap gap-4">
+            <a
+              href="/blog/"
+              class="rounded-lg bg-blue-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-blue-800"
+            >
+              Read the blog
+            </a>
+            <a
+              href="/resume/"
+              class="rounded-lg border border-slate-300 bg-white px-5 py-2.5 text-sm font-medium text-slate-700 hover:border-blue-300 hover:text-blue-700"
+            >
+              View resume
+            </a>
+          </div>
+        </section>
 
-  {
-    latestPosts.length > 0 && (
-      <section class="mt-16">
-        <div class="mb-6 flex items-center justify-between">
-          <h2 class="text-2xl font-semibold text-slate-900">Latest articles</h2>
-          <a href="/blog/" class="text-sm font-medium text-blue-700 hover:underline">
-            View all →
-          </a>
+        {
+          latestPosts.length > 0 && (
+            <section class="mt-16">
+              <div class="mb-2 flex items-baseline justify-between gap-4">
+                <h2 class="text-xl font-semibold text-slate-900">Latest articles</h2>
+                <a href="/blog/" class="shrink-0 text-sm text-blue-700 hover:underline">
+                  View all
+                </a>
+              </div>
+              <div class="blog-feed blog-feed--compact" role="feed">
+                {latestPosts.map((post) => (
+                  <BlogListItem
+                    title={post.data.title}
+                    description={post.data.description}
+                    pubDate={post.data.pubDate}
+                    tags={post.data.tags}
+                    href={postHref(post.id)}
+                    slug={post.id}
+                    readingTime={estimateReadingTime(post.body ?? "")}
+                  />
+                ))}
+              </div>
+            </section>
+          )
+        }
+      </div>
+
+      {
+        posts.length > 0 && (
+          <div class="blog-sidebar-column">
+            <ArchiveSidebar posts={posts} />
+          </div>
+        )
+      }
+    </div>
+
+    {
+      posts.length > 0 && (
+        <div class="blog-archive-mobile">
+          <ArchiveSidebar posts={posts} />
         </div>
-        <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {latestPosts.map((post) => (
-            <BlogCard
-              title={post.data.title}
-              description={post.data.description}
-              pubDate={post.data.pubDate}
-              tags={post.data.tags}
-              href={postHref(post.id)}
-              slug={post.id}
-            />
-          ))}
-        </div>
-      </section>
-    )
-  }
+      )
+    }
+  </div>
   <DisqusCountScript />
 </BaseLayout>

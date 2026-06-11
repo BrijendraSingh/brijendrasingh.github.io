@@ -1,0 +1,80 @@
+---
+import DisqusCommentCount from "./DisqusCommentCount.astro";
+import { formatTagLabel } from "../lib/blog";
+
+interface Props {
+  title: string;
+  description: string;
+  pubDate: Date;
+  tags?: string[];
+  href: string;
+  slug: string;
+  readingTime?: number;
+  showComments?: boolean;
+  filterTypes?: string;
+  filterCategories?: string;
+}
+
+const {
+  title,
+  description,
+  pubDate,
+  tags = [],
+  href,
+  slug,
+  readingTime,
+  showComments = false,
+  filterTypes = "",
+  filterCategories = "",
+} = Astro.props;
+
+const formatted = pubDate.toLocaleDateString("en-US", {
+  year: "numeric",
+  month: "long",
+  day: "numeric",
+});
+
+const primaryTag = tags[0];
+---
+
+<article
+  class="blog-list-item"
+  data-blog-filter-item
+  data-tags={tags.join(",")}
+  data-types={filterTypes}
+  data-categories={filterCategories}
+>
+  <a href={href} class="blog-list-item-link">
+    <div class="blog-list-item-content">
+      <h2 class="blog-list-item-title">{title}</h2>
+      <p class="blog-list-item-excerpt">{description}</p>
+      <p class="blog-list-item-meta">
+        <time datetime={pubDate.toISOString()}>{formatted}</time>
+        {
+          readingTime && (
+            <>
+              <span class="blog-list-item-sep" aria-hidden="true">·</span>
+              <span>{readingTime} min read</span>
+            </>
+          )
+        }
+        {
+          primaryTag && (
+            <>
+              <span class="blog-list-item-sep" aria-hidden="true">·</span>
+              <span>{formatTagLabel(primaryTag)}</span>
+            </>
+          )
+        }
+        {
+          showComments && (
+            <>
+              <span class="blog-list-item-sep" aria-hidden="true">·</span>
+              <DisqusCommentCount slug={slug} href={href} />
+            </>
+          )
+        }
+      </p>
+    </div>
+  </a>
+</article>

@@ -1,8 +1,15 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
-import BlogCard from "../../components/BlogCard.astro";
+import ArchiveSidebar from "../../components/ArchiveSidebar.astro";
+import BlogFilterSidebar from "../../components/BlogFilterSidebar.astro";
+import BlogListItem from "../../components/BlogListItem.astro";
 import DisqusCountScript from "../../components/DisqusCountScript.astro";
-import { getPublishedPosts, postHref } from "../../lib/blog";
+import {
+  BLOG_CATEGORIES,
+  BLOG_TYPES,
+  getMatchingGroupIds,
+} from "../../lib/blog-filters";
+import { getPublishedPosts, postHref, estimateReadingTime } from "../../lib/blog";
 
 const posts = await getPublishedPosts();
 ---
@@ -10,29 +17,61 @@ const posts = await getPublishedPosts();
 <BaseLayout
   title="Blog"
   description="Articles on software quality, test strategy, and automation by Brijendra Singh."
+  layout="article"
 >
-  <h1 class="text-3xl font-bold text-slate-900">Blog</h1>
-  <p class="mt-2 text-slate-600">
-    Practical software quality practices from 14+ years in the industry.
-  </p>
+  <div class="blog-page">
+    <div class="blog-list-layout">
+      {
+        posts.length > 0 && (
+          <div class="blog-filters-column">
+            <BlogFilterSidebar posts={posts} />
+          </div>
+        )
+      }
 
-  {
-    posts.length === 0 ? (
-      <p class="mt-10 text-slate-500">No posts yet. Check back soon.</p>
-    ) : (
-      <div class="mt-10 grid gap-6">
-        {posts.map((post) => (
-          <BlogCard
-            title={post.data.title}
-            description={post.data.description}
-            pubDate={post.data.pubDate}
-            tags={post.data.tags}
-            href={postHref(post.id)}
-            slug={post.id}
-          />
-        ))}
+      <div class="blog-primary">
+        {
+          posts.length === 0 ? (
+            <p class="blog-page-empty">No posts yet. Check back soon.</p>
+          ) : (
+            <div class="blog-feed" role="feed" data-blog-feed>
+              <p class="blog-filter-empty" data-blog-empty hidden>
+                No articles match the selected filters.
+              </p>
+              {posts.map((post) => (
+                <BlogListItem
+                  title={post.data.title}
+                  description={post.data.description}
+                  pubDate={post.data.pubDate}
+                  tags={post.data.tags}
+                  href={postHref(post.id)}
+                  slug={post.id}
+                  readingTime={estimateReadingTime(post.body ?? "")}
+                  filterTypes={getMatchingGroupIds(post.data.tags, BLOG_TYPES).join(",")}
+                  filterCategories={getMatchingGroupIds(post.data.tags, BLOG_CATEGORIES).join(",")}
+                />
+              ))}
+            </div>
+          )
+        }
       </div>
-    )
-  }
+
+      {
+        posts.length > 0 && (
+          <div class="blog-sidebar-column">
+            <ArchiveSidebar posts={posts} />
+          </div>
+        )
+      }
+    </div>
+
+    {
+      posts.length > 0 && (
+        <div class="blog-archive-mobile">
+          <ArchiveSidebar posts={posts} />
+        </div>
+      )
+    }
+  </div>
   <DisqusCountScript />
 </BaseLayout>
