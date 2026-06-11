@@ -1,0 +1,33 @@
+---
+description: >-
+  Mr. Brij workspace skill check gate — match project skills before substantive
+  work, log usage, delegate gaps to workspace skill-gap-detector.
+alwaysApply: true
+---
+
+# Mr. Brij Skill Check Gate
+
+CRITICAL: Before substantive work in this repo, check **workspace** skills in `.cursor/skills/`.
+
+## On Every Query
+
+1. **Match** — Scan `.cursor/skills/skill-orchestrator/references/skill-registry.md` by intent
+2. **Read** — Load matched `SKILL.md` files; start with `mr-brij-orchestrator` for site tasks
+3. **Gap** — If no workspace skill matches (medium+ confidence), delegate to `.cursor/agents/skill-gap-detector.md` via Task tool
+4. **Log** — Append to `.cursor/skills/_learnings/skill-usage-log.json` when done
+
+## Scope
+
+- Use **workspace** skills (`.cursor/skills/`) as primary for this repo
+- User-level skills (`~/.cursor/skills/`) may supplement but are read-only
+- **Never modify** `~/.cursor/` paths
+
+## Locked Brand Values
+
+- LinkedIn: `https://www.linkedin.com/in/brijendrapsingh/`
+- Contact config: `src/config/site.ts` only
+- Plan: `docs/PLAN.md`
+
+## Delegate
+
+See `.cursor/rules/subagent-router.mdc` for specialist routing.

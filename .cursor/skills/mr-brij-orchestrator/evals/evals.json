@@ -1,0 +1,23 @@
+{
+  "skill_name": "mr-brij-orchestrator",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I want to publish a new blog post about flaky tests in CI. Walk me through the workflow for mrbrij.github.io.",
+      "expected_output": "Routes to mr-brij-blog-publisher skill, explains 3-step Markdown + git push workflow, mentions frontmatter and tags from brand guide",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Start building my personal site in this repo — Astro on GitHub Pages with my resume and migrated blogs.",
+      "expected_output": "Reads PLAN.md, delegates to astro-site-builder and blog-migrator in phased order, references site.ts with correct LinkedIn URL",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "Review the About page copy — does it position me well as a senior QA practitioner?",
+      "expected_output": "Uses mr-brij-brand-guide, checks 14+ years positioning, professional voice, contact from site.ts only",
+      "files": []
+    }
+  ]
+}

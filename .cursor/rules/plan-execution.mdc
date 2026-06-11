@@ -1,0 +1,52 @@
+---
+description: >-
+  When executing the Mr. Brij Astro site plan, use workspace skills and subagents
+  for each phase. Binds .cursor/plans/ todos to .cursor/skills/ and .cursor/agents/.
+globs: ".cursor/plans/**/*.md"
+alwaysApply: false
+---
+
+# Plan Execution — Mr. Brij Astro Site
+
+When building from `.cursor/plans/mr_brij_astro_site_e42034d2.plan.md` or `docs/PLAN.md`:
+
+## Before Starting Any Plan Todo
+
+1. Read `mr-brij-orchestrator` skill: `.cursor/skills/mr-brij-orchestrator/SKILL.md`
+2. Read the matching phase skill (table below)
+3. Delegate to the subagent via Task tool when the phase is substantial
+4. Log completion to `.cursor/skills/_learnings/skill-usage-log.json`
+
+## Plan Todo → Skill → Subagent
+
+| Plan todo id | Skill | Subagent |
+|--------------|-------|----------|
+| `scaffold` | `astro-personal-site` | `astro-site-builder` |
+| `layouts-design` | `astro-personal-site` + `mr-brij-brand-guide` | `astro-site-builder` |
+| `core-pages` | `astro-personal-site` + `mr-brij-brand-guide` | `astro-site-builder` |
+| `migrate-posts` | `jekyll-to-astro-migration` | `blog-migrator` |
+| `seo-rss` | `github-pages-deploy` | `seo-deploy-agent` |
+| `deploy` | `github-pages-deploy` | `seo-deploy-agent` |
+| `polish-launch` | `github-pages-deploy` + `mr-brij-brand-guide` | `seo-deploy-agent` + `brand-alignment-reviewer` |
+
+## Execution Order
+
+```
+scaffold → layouts-design → core-pages → migrate-posts → seo-rss → deploy → polish-launch
+```
+
+`migrate-posts` may start after `scaffold` completes (needs `src/content/`).
+
+## Kickoff Prompt (copy when starting build)
+
+```
+Execute @.cursor/plans/mr_brij_astro_site_e42034d2.plan.md phase by phase.
+Follow @.cursor/rules/plan-execution.mdc — read workspace skills and delegate
+to subagents per the routing table. Start with todo: scaffold.
+```
+
+## Verification Per Todo
+
+- Run skill's verification steps (usually `npm run build`)
+- Mark plan todo complete only after verification passes
+- Run `brand-alignment-reviewer` before `polish-launch` sign-off

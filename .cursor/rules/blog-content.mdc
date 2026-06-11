@@ -1,0 +1,29 @@
+---
+description: Blog post authoring rules for Mr. Brij Astro content collection.
+globs: "src/content/blog/**/*.md"
+alwaysApply: false
+---
+
+# Blog Content Rules
+
+## Frontmatter (required)
+
+```yaml
+title: "..."
+description: "120-160 char SEO summary"
+pubDate: YYYY-MM-DD
+tags: ["kebab-case-tags"]
+draft: false
+```
+
+## Voice
+
+Software quality practitioner with 14+ years experience. Practical, professional, approachable.
+
+## Tags
+
+Prefer: test-strategy, automation, mobile-testing, microservices, quality-culture, defect-prevention, ci-cd
+
+## Publishing
+
+`git push` to `main` triggers auto-deploy. See `mr-brij-blog-publisher` skill.

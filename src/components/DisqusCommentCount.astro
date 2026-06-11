@@ -1,0 +1,26 @@
+---
+import { site } from "../config/site";
+import { getDisqusPath } from "../lib/disqus";
+
+interface Props {
+  slug: string;
+  href: string;
+}
+
+const { slug, href } = Astro.props;
+
+if (!site.disqus.enabled || !site.disqus.shortname) {
+  return null;
+}
+
+const identifier = getDisqusPath(slug);
+const commentHref = `${href}#disqus_thread`;
+---
+
+<a
+  href={commentHref}
+  class="text-slate-500 hover:text-blue-700"
+  data-disqus-identifier={identifier}
+>
+  Comments
+</a>

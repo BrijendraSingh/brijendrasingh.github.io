@@ -1,0 +1,29 @@
+---
+import PostMeta from "./PostMeta.astro";
+import DisqusCommentCount from "./DisqusCommentCount.astro";
+
+interface Props {
+  title: string;
+  description: string;
+  pubDate: Date;
+  tags?: string[];
+  href: string;
+  slug: string;
+}
+
+const { title, description, pubDate, tags = [], href, slug } = Astro.props;
+---
+
+<article class="rounded-lg border border-slate-200 bg-white p-6 shadow-sm transition hover:border-blue-200 hover:shadow-md">
+  <div class="flex flex-wrap items-center justify-between gap-2">
+    <PostMeta pubDate={pubDate} tags={tags} />
+    <DisqusCommentCount slug={slug} href={href} />
+  </div>
+  <h2 class="mt-3 text-xl font-semibold text-slate-900">
+    <a href={href} class="hover:text-blue-700">{title}</a>
+  </h2>
+  <p class="mt-2 text-slate-600">{description}</p>
+  <a href={href} class="mt-4 inline-block text-sm font-medium text-blue-700 hover:underline">
+    Read more →
+  </a>
+</article>

@@ -1,0 +1,83 @@
+[
+  {
+    "sourceFile": "2021-10-21-how-to-choose-tools.markdown",
+    "title": "The Paradox of choice - Automation tool selection",
+    "slug": "how-to-choose-tools",
+    "oldPath": "/posts/2021-10-21-how-to-choose-tools/",
+    "newPath": "/blog/how-to-choose-tools/",
+    "pubDate": "2021-10-21",
+    "heroImage": "post_pic_tools_selection.jpg"
+  },
+  {
+    "sourceFile": "2021-11-07-engineered-test-data.markdown",
+    "title": "Software Quality with Engineered test data",
+    "slug": "engineered-test-data",
+    "oldPath": "/posts/2021-11-07-engineered-test-data/",
+    "newPath": "/blog/engineered-test-data/",
+    "pubDate": "2021-11-07",
+    "heroImage": "post_pic3.jpg"
+  },
+  {
+    "sourceFile": "2021-11-22-art-of-automation.markdown",
+    "title": "Understanding Automation Test Layers",
+    "slug": "art-of-automation",
+    "oldPath": "/posts/2021-11-22-art-of-automation/",
+    "newPath": "/blog/art-of-automation/",
+    "pubDate": "2021-11-22",
+    "heroImage": "post_pic_art_automation.jpg"
+  },
+  {
+    "sourceFile": "2021-12-10-component-tests.markdown",
+    "title": "End to End Testing using component strategy",
+    "slug": "component-tests",
+    "oldPath": "/posts/2021-12-10-component-tests/",
+    "newPath": "/blog/component-tests/",
+    "pubDate": "2021-12-10",
+    "heroImage": "post_pic_component_test.jpg"
+  },
+  {
+    "sourceFile": "2022-02-02-who-tests-your-test.markdown",
+    "title": "Who tests your test?",
+    "slug": "who-tests-your-test",
+    "oldPath": "/posts/2022-02-02-who-tests-your-test/",
+    "newPath": "/blog/who-tests-your-test/",
+    "pubDate": "2022-02-02",
+    "heroImage": "post_pic_who_tests.jpg"
+  },
+  {
+    "sourceFile": "2022-04-27-detox-e2e.markdown",
+    "title": "Shif left in Mobile App Automation Testing",
+    "slug": "detox-e2e",
+    "oldPath": "/posts/2022-04-27-detox-e2e/",
+    "newPath": "/blog/detox-e2e/",
+    "pubDate": "2022-04-27",
+    "heroImage": "post_pic_detox.jpg"
+  },
+  {
+    "sourceFile": "2022-05-07-mobile-test-strategy.markdown",
+    "title": "How to build Test Strategy for Mobile Applications",
+    "slug": "mobile-test-strategy",
+    "oldPath": "/posts/2022-05-07-mobile-test-strategy/",
+    "newPath": "/blog/mobile-test-strategy/",
+    "pubDate": "2022-05-07",
+    "heroImage": "post_pic_mobile_strategy.jpg"
+  },
+  {
+    "sourceFile": "2022-05-11-testing-microservices.markdown",
+    "title": "Microservices Test Strategy",
+    "slug": "testing-microservices",
+    "oldPath": "/posts/2022-05-11-testing-microservices/",
+    "newPath": "/blog/testing-microservices/",
+    "pubDate": "2022-05-11",
+    "heroImage": "post_pic_micro_test_strategy.jpg"
+  },
+  {
+    "sourceFile": "2022-05-25-defect-prevention-mindset.markdown",
+    "title": "Keys to become an effective QA",
+    "slug": "defect-prevention-mindset",
+    "oldPath": "/posts/2022-05-25-defect-prevention-mindset/",
+    "newPath": "/blog/defect-prevention-mindset/",
+    "pubDate": "2022-05-25",
+    "heroImage": "defects-prev.jpg"
+  }
+]

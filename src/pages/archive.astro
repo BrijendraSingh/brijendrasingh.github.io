@@ -1,0 +1,47 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { getPublishedPosts, postHref } from "../lib/blog";
+
+const posts = await getPublishedPosts();
+const byYear = posts.reduce<Record<number, typeof posts>>((acc, post) => {
+  const year = post.data.pubDate.getFullYear();
+  (acc[year] ??= []).push(post);
+  return acc;
+}, {});
+const years = Object.keys(byYear)
+  .map(Number)
+  .sort((a, b) => b - a);
+---
+
+<BaseLayout title="Archive" description="Archive of all blog posts by Brijendra Singh.">
+  <h1 class="text-3xl font-bold text-slate-900">Archive</h1>
+  <p class="mt-2 text-slate-600">All articles, grouped by year.</p>
+
+  <div class="mt-10 space-y-10">
+    {
+      years.map((year) => (
+        <section>
+          <h2 class="text-2xl font-semibold text-slate-900">{year}</h2>
+          <ul class="mt-4 space-y-3">
+            {byYear[year].map((post) => (
+              <li class="flex flex-wrap items-baseline gap-x-3 gap-y-1 border-b border-slate-100 pb-3">
+                <time
+                  class="text-sm text-slate-500"
+                  datetime={post.data.pubDate.toISOString()}
+                >
+                  {post.data.pubDate.toLocaleDateString("en-US", {
+                    month: "short",
+                    day: "numeric",
+                  })}
+                </time>
+                <a href={postHref(post.id)} class="font-medium text-blue-700 hover:underline">
+                  {post.data.title}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))
+    }
+  </div>
+</BaseLayout>

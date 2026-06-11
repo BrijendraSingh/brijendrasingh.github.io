@@ -1,0 +1,62 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import ContactLinks from "../components/ContactLinks.astro";
+import { site } from "../config/site";
+
+const expertise = [
+  "Test Strategy",
+  "Test Automation",
+  "Mobile Testing",
+  "API & Microservices Testing",
+  "Quality Culture & Defect Prevention",
+  "CI/CD Quality Gates",
+];
+
+const personSchema = {
+  "@context": "https://schema.org",
+  "@type": "Person",
+  name: site.name,
+  url: site.url,
+  jobTitle: site.tagline,
+  description: site.description,
+  sameAs: [site.linkedin, site.github],
+};
+---
+
+<BaseLayout title="About" description={`About ${site.name} — ${site.tagline}`}>
+  <script type="application/ld+json" set:html={JSON.stringify(personSchema)} />
+
+  <h1 class="text-3xl font-bold text-slate-900">About</h1>
+  <p class="mt-2 text-lg text-slate-600">{site.tagline}</p>
+
+  <div class="prose-content mt-8">
+    <p>
+      I'm {site.name}, a software quality practitioner with over 14 years in the
+      software industry. Through {site.brand}, I share practical lessons on test
+      strategy, automation, and building a quality mindset in engineering teams.
+    </p>
+    <p>
+      My writing draws from hands-on experience across mobile applications,
+      microservices, and large-scale test automation — always focused on what helps
+      teams ship with confidence.
+    </p>
+  </div>
+
+  <section class="mt-10">
+    <h2 class="text-xl font-semibold text-slate-900">Core expertise</h2>
+    <ul class="mt-4 grid gap-2 sm:grid-cols-2">
+      {
+        expertise.map((item) => (
+          <li class="rounded-lg border border-slate-200 bg-white px-4 py-3 text-slate-700">
+            {item}
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  <section class="mt-10">
+    <h2 class="text-xl font-semibold text-slate-900">Contact</h2>
+    <ContactLinks class="mt-4" />
+  </section>
+</BaseLayout>

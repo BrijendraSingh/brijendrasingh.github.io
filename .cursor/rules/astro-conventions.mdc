@@ -1,0 +1,28 @@
+---
+description: Astro and TypeScript conventions for the Mr. Brij personal site.
+globs: "{astro.config.mjs,src/**/*.{astro,ts,tsx,css}}"
+alwaysApply: false
+---
+
+# Astro Conventions (Mr. Brij)
+
+## Config
+
+- `site: 'https://brijendrasingh.github.io'`, `base: '/'`, `output: 'static'`
+- Contact/social links: import from `src/config/site.ts` — never hardcode
+
+## Components
+
+- Use `.astro` for layouts and static components
+- Tailwind for styling; keep professional minimal palette (slate/navy, blue accent)
+- Semantic HTML; accessible nav and headings
+
+## Blog
+
+- Posts in `src/content/blog/` with content collection schema
+- URL: `/blog/{slug}/` where slug = filename without extension
+- Filter `draft: true` posts from production listings
+
+## Build
+
+Run `npm run build` before claiming work complete.

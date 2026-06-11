@@ -1,0 +1,20 @@
+---
+description: Brand alignment for Mr. Brij site copy, config, and design.
+globs: "{src/config/site.ts,src/pages/**/*,src/components/**/*,src/content/blog/**/*.md}"
+alwaysApply: false
+---
+
+# Brand Alignment
+
+Read `.cursor/skills/mr-brij-brand-guide/SKILL.md` when editing copy or contact info.
+
+## Non-Negotiables
+
+- Brand: **Mr. Brij** — Brijendra Singh, Software Quality Practitioner
+- LinkedIn: `https://www.linkedin.com/in/brijendrapsingh/`
+- All contact URLs in `src/config/site.ts` only
+- Design: professional & minimal — credibility over flash
+
+## Before Launch
+
+Delegate `brand-alignment-reviewer` for final copy/UI review.

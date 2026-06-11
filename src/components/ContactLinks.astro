@@ -1,0 +1,32 @@
+---
+import { site } from "../config/site";
+
+interface Props {
+  class?: string;
+}
+
+const { class: className = "" } = Astro.props;
+
+const links = [
+  { href: site.github, label: "GitHub", external: true },
+  { href: site.linkedin, label: "LinkedIn", external: true },
+  { href: `mailto:${site.email}`, label: "Email", external: false },
+];
+---
+
+<ul class:list={["flex flex-wrap gap-4 text-sm", className]}>
+  {
+    links.map((link) => (
+      <li>
+        <a
+          href={link.href}
+          class="text-blue-700 hover:text-blue-900 hover:underline"
+          target={link.external ? "_blank" : undefined}
+          rel={link.external ? "noopener noreferrer" : undefined}
+        >
+          {link.label}
+        </a>
+      </li>
+    ))
+  }
+</ul>

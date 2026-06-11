@@ -1,0 +1,33 @@
+---
+import BaseLayout from "./BaseLayout.astro";
+import PostMeta from "../components/PostMeta.astro";
+import DisqusComments from "../components/DisqusComments.astro";
+
+interface Props {
+  title: string;
+  description: string;
+  pubDate: Date;
+  tags?: string[];
+  slug: string;
+  commentsDisable?: boolean;
+}
+
+const { title, description, pubDate, tags = [], slug, commentsDisable = false } = Astro.props;
+---
+
+<BaseLayout title={title} description={description} type="article">
+  <article>
+    <header class="mb-8 border-b border-slate-200 pb-6">
+      <h1 class="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
+        {title}
+      </h1>
+      <div class="mt-4">
+        <PostMeta pubDate={pubDate} tags={tags} />
+      </div>
+    </header>
+    <div class="prose-content">
+      <slot />
+    </div>
+    {!commentsDisable && <DisqusComments slug={slug} />}
+  </article>
+</BaseLayout>

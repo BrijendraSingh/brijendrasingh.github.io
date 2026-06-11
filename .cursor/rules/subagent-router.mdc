@@ -1,0 +1,29 @@
+---
+description: Routes Mr. Brij website tasks to focused workspace subagents.
+alwaysApply: true
+---
+
+# Subagent Router (mr-brij workspace)
+
+Delegate via Task tool to workspace agents in `.cursor/agents/`.
+
+| User Intent | Agent | Skill | model_tier |
+|-------------|-------|-------|------------|
+| Start site work, coordinate phases, what's next | `mr-brij-orchestrator` | `mr-brij-orchestrator` | inherit |
+| Astro scaffold, layouts, pages, components | `astro-site-builder` | `astro-personal-site` | inherit |
+| Migrate Jekyll posts, redirects, images | `blog-migrator` | `jekyll-to-astro-migration` | inherit |
+| New blog post, publish article, blogging workflow | — | `mr-brij-blog-publisher` | fast |
+| GitHub Actions, Pages deploy, CI failures | `seo-deploy-agent` | `github-pages-deploy` | fast |
+| SEO, RSS, sitemap, Lighthouse, launch | `seo-deploy-agent` | `github-pages-deploy` | fast |
+| Brand/copy/design review | `brand-alignment-reviewer` | `mr-brij-brand-guide` | inherit |
+| Missing skill for this repo | `skill-gap-detector` | `skill-orchestrator` | inherit |
+| List skills, skill inventory | — | `skill-orchestrator` | fast |
+
+## Model Tier
+
+- **fast**: pass `model: "fast"` in Task tool
+- **inherit**: omit `model` parameter
+
+## Parallel Delegation
+
+Independent phases (e.g., migration after scaffold exists) may run `astro-site-builder` + `blog-migrator` in parallel.
