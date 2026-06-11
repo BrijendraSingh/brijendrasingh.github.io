@@ -5,6 +5,7 @@ import tailwindcss from '@tailwindcss/vite';
 import sitemap from '@astrojs/sitemap';
 import mdx from '@astrojs/mdx';
 import rehypeMermaid from 'rehype-mermaid';
+import { rehypeWrapTables } from './src/lib/rehype-wrap-tables.mjs';
 
 // https://astro.build/config
 export default defineConfig({
@@ -17,7 +18,7 @@ export default defineConfig({
       type: 'shiki',
       excludeLangs: ['mermaid'],
     },
-    rehypePlugins: [[rehypeMermaid, { strategy: 'img-svg' }]],
+    rehypePlugins: [rehypeWrapTables, [rehypeMermaid, { strategy: 'img-svg' }]],
   },
 
   vite: {
