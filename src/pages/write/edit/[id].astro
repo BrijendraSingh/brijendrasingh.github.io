@@ -1,0 +1,10 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import PostEditor from '../../../components/react/PostEditor';
+
+const id = parseInt(Astro.params.id ?? '', 10);
+---
+
+<BaseLayout title="Edit article" description="Edit your article." layout="article">
+  <PostEditor client:load postId={id} />
+</BaseLayout>

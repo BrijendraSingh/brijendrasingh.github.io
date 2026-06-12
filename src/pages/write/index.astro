@@ -1,0 +1,8 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PostEditor from '../../components/react/PostEditor';
+---
+
+<BaseLayout title="Write" description="Author dashboard for Mr Brij blog." layout="article">
+  <PostEditor client:load />
+</BaseLayout>
