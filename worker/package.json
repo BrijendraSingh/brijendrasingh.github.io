@@ -1,0 +1,25 @@
+{
+  "name": "@mr-brij/worker",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "deploy": "wrangler deploy",
+    "db:migrate:local": "wrangler d1 migrations apply mr-brij-db --local",
+    "db:migrate:remote": "wrangler d1 migrations apply mr-brij-db --remote",
+    "dev:worker": "wrangler dev",
+    "tail": "wrangler tail mr-brij"
+  },
+  "dependencies": {
+    "@mr-brij/shared": "1.0.0",
+    "express": "4.22.1",
+    "express-validator": "7.3.1",
+    "hono": "^4.9.6"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20250611.0",
+    "@types/express": "^5.0.0",
+    "typescript": "5.9.3",
+    "wrangler": "^4.100.0"
+  }
+}
