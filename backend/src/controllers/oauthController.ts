@@ -6,6 +6,7 @@ import { getRedirectBase, isSecureRequest, setSessionCookie } from '../utils/aut
 import { generateSessionToken } from '../utils/session.js';
 import { isAdminEmail } from '../middleware/requireSession.js';
 import { AppError } from '../utils/AppError.js';
+import { SAFE_USER_SELECT } from '../utils/userQueries.js';
 import {
   getOAuthEnv,
   isGitHubOAuthConfigured,
@@ -33,27 +34,29 @@ async function updateExistingUser(
   profile: OAuthProfile,
   token: string
 ): Promise<SafeUser> {
-  const finalRole = isAdminEmail(profile.email)
-    ? 'admin'
-    : currentRole === 'admin'
-      ? 'admin'
-      : currentRole;
+  const existing = await dbGet<{ avatar_source: string }>(
+    'SELECT avatar_source FROM users WHERE id = ?',
+    [userId]
+  );
+  const updateAvatar = existing?.avatar_source === 'oauth';
   await dbRun(
-    `UPDATE users SET email = ?, display_name = ?, avatar_url = ?, oauth_provider = ?,
-     oauth_subject = ?, session_token = ?, role = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?`,
+    `UPDATE users SET email = ?, display_name = ?,
+     avatar_url = CASE WHEN ? THEN ? ELSE avatar_url END,
+     oauth_provider = ?, oauth_subject = ?, session_token = ?,
+     updated_at = CURRENT_TIMESTAMP WHERE id = ?`,
     [
       profile.email,
       profile.name,
+      updateAvatar ? 1 : 0,
       profile.avatar,
       profile.provider,
       profile.subject,
       token,
-      finalRole,
       userId,
     ]
   );
   const user = await dbGet<SafeUser>(
-    `SELECT id, email, display_name, avatar_url, role FROM users WHERE id = ?`,
+    `SELECT ${SAFE_USER_SELECT} FROM users WHERE id = ?`,
     [userId]
   );
   if (!user) throw AppError.badRequest('Failed to load user.');
@@ -61,7 +64,6 @@ async function updateExistingUser(
 }
 
 async function upsertUser(profile: OAuthProfile): Promise<SafeUser> {
-  const role = isAdminEmail(profile.email) ? 'admin' : 'reader';
   const existing = await dbGet<{ id: number; role: string }>(
     `SELECT id, role FROM users WHERE oauth_provider = ? AND oauth_subject = ?`,
     [profile.provider, profile.subject]
@@ -73,7 +75,6 @@ async function upsertUser(profile: OAuthProfile): Promise<SafeUser> {
     return updateExistingUser(existing.id, existing.role, profile, token);
   }
 
-  // Seeded users (e.g. oauth_subject = 'seed-admin') share email but not Google subject yet.
   const byEmail = await dbGet<{ id: number; role: string }>(
     `SELECT id, role FROM users WHERE email = ?`,
     [profile.email]
@@ -82,13 +83,14 @@ async function upsertUser(profile: OAuthProfile): Promise<SafeUser> {
     return updateExistingUser(byEmail.id, byEmail.role, profile, token);
   }
 
+  const role = isAdminEmail(profile.email) ? 'admin' : 'reader';
   const result = await dbRun(
-    `INSERT INTO users (email, display_name, avatar_url, oauth_provider, oauth_subject, role, session_token)
-     VALUES (?, ?, ?, ?, ?, ?, ?)`,
+    `INSERT INTO users (email, display_name, avatar_url, avatar_source, oauth_provider, oauth_subject, role, session_token)
+     VALUES (?, ?, ?, 'oauth', ?, ?, ?, ?)`,
     [profile.email, profile.name, profile.avatar, profile.provider, profile.subject, role, token]
   );
   const user = await dbGet<SafeUser>(
-    `SELECT id, email, display_name, avatar_url, role FROM users WHERE id = ?`,
+    `SELECT ${SAFE_USER_SELECT} FROM users WHERE id = ?`,
     [result.lastID]
   );
   if (!user) throw AppError.badRequest('Failed to create user.');
