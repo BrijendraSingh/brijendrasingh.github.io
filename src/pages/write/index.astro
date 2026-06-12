@@ -1,8 +1,8 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import PostEditor from '../../components/react/PostEditor';
+import AuthorDashboard from '../../components/react/AuthorDashboard';
 ---
 
-<BaseLayout title="Write" description="Author dashboard for Mr Brij blog." layout="article">
-  <PostEditor client:load />
+<BaseLayout title="My articles" description="Manage your articles on Mr Brij blog." layout="article">
+  <AuthorDashboard client:load />
 </BaseLayout>

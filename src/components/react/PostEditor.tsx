@@ -101,6 +101,9 @@ export default function PostEditor({ postId, isAdmin = false }: Props) {
 
   return (
     <div className="mx-auto max-w-4xl p-4 sm:p-6">
+      <a href="/write/" className="mb-4 inline-block text-sm text-blue-700 hover:underline">
+        ← My articles
+      </a>
       <div className="mb-6 flex items-center justify-between">
         <h1 className="text-2xl font-semibold text-slate-900">
           {postId ? 'Edit article' : 'New article'}
@@ -144,11 +147,39 @@ export default function PostEditor({ postId, isAdmin = false }: Props) {
       </div>
       <div className="mt-6 flex flex-wrap gap-3">
         <button type="button" className="btn btn-primary" onClick={save} disabled={saving}>
-          {saving ? 'Saving…' : 'Save draft'}
+          {saving ? 'Saving…' : post.status === 'published' ? 'Save changes' : 'Save draft'}
         </button>
         {post.id && !isAdmin && ['draft', 'rejected'].includes(post.status ?? '') && (
           <button type="button" className="btn btn-ghost" onClick={submitForReview} disabled={saving}>
             Submit for review
+          </button>
+        )}
+        {post.id && !isAdmin && post.status === 'published' && (
+          <button
+            type="button"
+            className="btn btn-ghost"
+            disabled={saving}
+            onClick={async () => {
+              if (
+                !window.confirm(
+                  'Unpublish this article? It will be removed from the public blog and moved to draft.'
+                )
+              ) {
+                return;
+              }
+              setSaving(true);
+              try {
+                const updated = await api.unpublishPost(post.id!);
+                setPost(updated);
+                setMessage('Unpublished — article is now a draft.');
+              } catch (err) {
+                setMessage(err instanceof Error ? err.message : 'Unpublish failed.');
+              } finally {
+                setSaving(false);
+              }
+            }}
+          >
+            Unpublish
           </button>
         )}
       </div>
