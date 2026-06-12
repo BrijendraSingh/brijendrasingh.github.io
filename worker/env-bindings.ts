@@ -6,6 +6,10 @@ export function syncProcessEnvFromBindings(env: Env): void {
     ['GOOGLE_CLIENT_SECRET', 'GOOGLE_CLIENT_SECRET'],
     ['GITHUB_CLIENT_ID', 'GITHUB_CLIENT_ID'],
     ['GITHUB_CLIENT_SECRET', 'GITHUB_CLIENT_SECRET'],
+    ['RESEND_API_KEY', 'RESEND_API_KEY'],
+    ['EMAIL_FROM', 'EMAIL_FROM'],
+    ['CLOUDFLARE_API_TOKEN', 'CLOUDFLARE_API_TOKEN'],
+    ['CLOUDFLARE_ACCOUNT_ID', 'CLOUDFLARE_ACCOUNT_ID'],
   ];
 
   for (const [bindingKey, envKey] of pairs) {

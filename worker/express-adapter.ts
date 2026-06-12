@@ -146,14 +146,9 @@ function runExpressHandlers(
       runHandler(handlers[index]!);
     };
     const runHandler = (handler: ExpressHandler) => {
-      try {
-        const result = handler(req, res, expressNext);
-        if (result && typeof (result as Promise<unknown>).then === 'function') {
-          (result as Promise<unknown>).catch(expressNext);
-        }
-      } catch (err) {
-        expressNext(err);
-      }
+      void Promise.resolve()
+        .then(() => handler(req, res, expressNext))
+        .catch(expressNext);
     };
     runHandler(handlers[0]!);
   });

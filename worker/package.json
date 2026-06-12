@@ -7,6 +7,7 @@
     "deploy": "wrangler deploy",
     "db:migrate:local": "wrangler d1 migrations apply mr-brij-db --local",
     "db:migrate:remote": "wrangler d1 migrations apply mr-brij-db --remote",
+    "db:seed:remote": "wrangler d1 execute mr-brij-db --remote --file=../scripts/seed-remote.sql",
     "dev:worker": "wrangler dev",
     "tail": "wrangler tail mr-brij"
   },

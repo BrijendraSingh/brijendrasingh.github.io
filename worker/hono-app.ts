@@ -1,26 +1,37 @@
 import { Hono } from 'hono';
+import type { RequestHandler } from 'express';
 import { body } from 'express-validator';
 import { APP_CONFIG, API_ENDPOINTS } from '@mr-brij/shared';
 import { optionalSession } from '../backend/src/middleware/optionalSession.js';
 import {
   requireSession,
-  requireAdmin,
-  requireAuthorOrAdmin,
+  requirePermission,
   requireWriter,
 } from '../backend/src/middleware/requireSession.js';
+import {
+  authRateLimit,
+  forgotPasswordRateLimit,
+} from '../backend/src/middleware/rateLimit.js';
 import { validate } from '../backend/src/middleware/validation.js';
 import * as oauth from '../backend/src/controllers/oauthController.js';
 import * as emailAuth from '../backend/src/controllers/emailAuthController.js';
+import * as profile from '../backend/src/controllers/profileController.js';
+import * as password from '../backend/src/controllers/passwordController.js';
+import * as adminUsers from '../backend/src/controllers/adminUserController.js';
 import * as posts from '../backend/src/controllers/postController.js';
 import * as comments from '../backend/src/controllers/commentController.js';
 import * as reactions from '../backend/src/controllers/reactionController.js';
 import * as subscribe from '../backend/src/controllers/subscribeController.js';
 import { fromExpress } from './express-adapter.js';
 
-const optionalAuth = fromExpress(optionalSession);
-const auth = fromExpress(optionalSession, requireSession);
 const author = fromExpress(optionalSession, requireSession, requireWriter);
-const admin = fromExpress(optionalSession, requireSession, requireAdmin);
+
+const withPostModerator = (...handlers: RequestHandler[]) =>
+  fromExpress(optionalSession, requireSession, requirePermission('posts:moderate'), ...handlers);
+const withCommentModerator = (...handlers: RequestHandler[]) =>
+  fromExpress(optionalSession, requireSession, requirePermission('comments:moderate'), ...handlers);
+const withUserManager = (...handlers: RequestHandler[]) =>
+  fromExpress(optionalSession, requireSession, requirePermission('users:manage'), ...handlers);
 
 export function createHonoApp(nodeEnv = 'production'): Hono {
   const app = new Hono();
@@ -49,6 +60,8 @@ export function createHonoApp(nodeEnv = 'production'): Hono {
   app.get('/auth/github', fromExpress(oauth.startGitHub));
   app.get('/auth/github/callback', fromExpress(oauth.callbackGitHub));
   app.get('/auth/signin', fromExpress(emailAuth.getSignupPage));
+  app.get('/auth/forgot-password', fromExpress(password.getForgotPasswordPage));
+  app.get('/auth/reset-password', fromExpress(password.getResetPasswordPage));
 
   app.get(API_ENDPOINTS.AUTH_ME, fromExpress(optionalSession, oauth.me));
   app.post(API_ENDPOINTS.AUTH_LOGOUT, fromExpress(optionalSession, requireSession, oauth.logout));
@@ -56,6 +69,7 @@ export function createHonoApp(nodeEnv = 'production'): Hono {
     API_ENDPOINTS.AUTH_SIGNUP,
     fromExpress(
       optionalSession,
+      authRateLimit,
       validate([
         body('email').trim().isEmail().normalizeEmail(),
         body('password').isLength({ min: 8, max: 128 }),
@@ -68,12 +82,81 @@ export function createHonoApp(nodeEnv = 'production'): Hono {
     API_ENDPOINTS.AUTH_LOGIN,
     fromExpress(
       optionalSession,
+      authRateLimit,
       validate([
         body('email').trim().isEmail().normalizeEmail(),
         body('password').isLength({ min: 1, max: 128 }),
       ]),
       emailAuth.login
     )
+  );
+  app.post(
+    API_ENDPOINTS.AUTH_CHANGE_PASSWORD,
+    fromExpress(
+      optionalSession,
+      requireSession,
+      validate([body('new_password').isLength({ min: 8, max: 128 })]),
+      password.changePassword
+    )
+  );
+  app.post(
+    API_ENDPOINTS.AUTH_FORGOT_PASSWORD,
+    fromExpress(
+      optionalSession,
+      forgotPasswordRateLimit,
+      validate([body('email').trim().isEmail().normalizeEmail()]),
+      password.forgotPassword
+    )
+  );
+  app.post(
+    API_ENDPOINTS.AUTH_RESET_PASSWORD,
+    fromExpress(
+      optionalSession,
+      authRateLimit,
+      validate([body('new_password').isLength({ min: 8, max: 128 }), body('token').trim().notEmpty()]),
+      password.resetPassword
+    )
+  );
+
+  app.get(API_ENDPOINTS.PROFILE, fromExpress(optionalSession, requireSession, profile.getProfile));
+  app.patch(
+    API_ENDPOINTS.PROFILE,
+    fromExpress(
+      optionalSession,
+      requireSession,
+      validate([
+        body('display_name').optional().trim().isLength({ min: 1, max: 100 }),
+        body('bio').optional().trim().isLength({ max: 500 }),
+        body('avatar_url').optional().trim(),
+        body('avatar_source').optional().isIn(['oauth', 'url', 'upload']),
+      ]),
+      profile.updateProfile
+    )
+  );
+  app.post(
+    API_ENDPOINTS.PROFILE_AVATAR,
+    fromExpress(
+      optionalSession,
+      requireSession,
+      validate([
+        body('image').notEmpty(),
+        body('content_type').isIn(['image/jpeg', 'image/png', 'image/webp']),
+      ]),
+      profile.uploadAvatar
+    )
+  );
+  app.post(
+    API_ENDPOINTS.PROFILE_EMAIL_REQUEST,
+    fromExpress(
+      optionalSession,
+      requireSession,
+      validate([body('new_email').trim().isEmail().normalizeEmail()]),
+      password.requestEmailChange
+    )
+  );
+  app.get(
+    '/api/profile/email/confirm/:token',
+    fromExpress(optionalSession, password.confirmEmailChange)
   );
 
   app.get(API_ENDPOINTS.POSTS, fromExpress(optionalSession, posts.listPublic));
@@ -137,25 +220,43 @@ export function createHonoApp(nodeEnv = 'production'): Hono {
   app.post('/api/author/posts/:id/submit', fromExpress(optionalSession, requireSession, requireWriter, posts.submitAuthor));
   app.delete('/api/author/posts/:id', fromExpress(optionalSession, requireSession, requireWriter, posts.deleteAuthor));
 
-  app.get(API_ENDPOINTS.ADMIN_POSTS, fromExpress(optionalSession, requireSession, requireAdmin, posts.listAdmin));
-  app.get(API_ENDPOINTS.ADMIN_QUEUE, fromExpress(optionalSession, requireSession, requireAdmin, posts.adminQueue));
-  app.post(API_ENDPOINTS.ADMIN_POSTS, fromExpress(optionalSession, requireSession, requireAdmin, posts.createAdmin));
-  app.patch('/api/admin/posts/:id', fromExpress(optionalSession, requireSession, requireAdmin, posts.updateAdmin));
-  app.post('/api/admin/posts/:id/publish', fromExpress(optionalSession, requireSession, requireAdmin, posts.publishAdmin));
+  app.get(API_ENDPOINTS.ADMIN_POSTS, withPostModerator(posts.listAdmin));
+  app.get('/api/admin/posts/:id', withPostModerator(posts.getAdmin));
+  app.get(API_ENDPOINTS.ADMIN_QUEUE, withPostModerator(posts.adminQueue));
+  app.post(API_ENDPOINTS.ADMIN_POSTS, withPostModerator(posts.createAdmin));
+  app.patch('/api/admin/posts/:id', withPostModerator(posts.updateAdmin));
+  app.post('/api/admin/posts/:id/publish', withPostModerator(posts.publishAdmin));
   app.post(
     '/api/admin/posts/:id/reject',
     fromExpress(
       optionalSession,
       requireSession,
-      requireAdmin,
+      requirePermission('posts:moderate'),
       validate([body('note').optional().trim()]),
       posts.rejectAdmin
     )
   );
-  app.post('/api/admin/posts/:id/unpublish', fromExpress(optionalSession, requireSession, requireAdmin, posts.unpublishAdmin));
-  app.delete('/api/admin/posts/:id', fromExpress(optionalSession, requireSession, requireAdmin, posts.deleteAdmin));
-  app.get('/api/admin/comments', fromExpress(optionalSession, requireSession, requireAdmin, comments.listAdminComments));
-  app.patch('/api/admin/comments/:id', fromExpress(optionalSession, requireSession, requireAdmin, comments.moderateComment));
+  app.post('/api/admin/posts/:id/unpublish', withPostModerator(posts.unpublishAdmin));
+  app.delete('/api/admin/posts/:id', withPostModerator(posts.deleteAdmin));
+  app.get('/api/admin/comments', withCommentModerator(comments.listAdminComments));
+  app.patch('/api/admin/comments/:id', withCommentModerator(comments.moderateComment));
+
+  app.get(API_ENDPOINTS.ADMIN_USERS, withUserManager(adminUsers.listUsers));
+  app.get('/api/admin/users/:id', withUserManager(adminUsers.getUser));
+  app.patch(
+    '/api/admin/users/:id',
+    fromExpress(
+      optionalSession,
+      requireSession,
+      requirePermission('users:manage'),
+      validate([
+        body('role').optional().isIn(['admin', 'moderator', 'author', 'reader']),
+        body('is_active').optional().isBoolean(),
+      ]),
+      adminUsers.updateUser
+    )
+  );
+  app.post('/api/admin/users/:id/reset-sessions', withUserManager(adminUsers.resetUserSessions));
 
   return app;
 }
