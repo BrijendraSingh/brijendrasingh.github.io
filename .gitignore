@@ -10,4 +10,7 @@ ggl.txt
 client_secret_*.json
 *.sqlite
 .wrangler/
+worker/hono-app.js
+worker/express-adapter.js
+backend/dist/
 .DS_Store
