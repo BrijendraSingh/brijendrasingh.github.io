@@ -1,12 +1,15 @@
 export type {
   UserRole,
   OAuthProvider,
+  AvatarSource,
   PostStatus,
   ReactionType,
   ReviewAction,
   SubscriptionScope,
   User,
   SafeUser,
+  ProfileUser,
+  AdminUserRow,
   Tag,
   Post,
   PostWithAuthor,
@@ -22,7 +25,25 @@ export type {
   UpdateCommentRequest,
   SetReactionRequest,
   SubscribeRequest,
+  UpdateProfileRequest,
+  ChangePasswordRequest,
+  ForgotPasswordRequest,
+  ResetPasswordRequest,
+  RequestEmailChangeRequest,
+  AdminUpdateUserRequest,
+  UploadAvatarRequest,
 } from './types/index.js';
 
 export { APP_CONFIG, API_ENDPOINTS, POST_STATUS_LABELS } from './constants/index.js';
+export {
+  type Permission,
+  ROLE_PERMISSIONS,
+  hasPermission,
+  canModeratePosts,
+  canModerateComments,
+  canManageUsers,
+  canWritePosts,
+  USER_ROLES,
+  ROLE_LABELS,
+} from './permissions.js';
 export { TextUtils } from './utils/TextUtils.js';

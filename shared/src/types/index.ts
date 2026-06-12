@@ -1,5 +1,6 @@
-export type UserRole = 'admin' | 'author' | 'reader';
+export type UserRole = 'admin' | 'moderator' | 'author' | 'reader';
 export type OAuthProvider = 'google' | 'github' | 'email';
+export type AvatarSource = 'oauth' | 'url' | 'upload';
 export type PostStatus = 'draft' | 'pending_review' | 'published' | 'rejected';
 export type ReactionType = 'like' | 'thumbs_up' | 'thumbs_down';
 export type ReviewAction = 'submitted' | 'approved' | 'rejected' | 'changes_requested';
@@ -10,9 +11,13 @@ export interface User {
   email: string;
   display_name: string;
   avatar_url: string | null;
+  avatar_source: AvatarSource;
+  bio: string | null;
   oauth_provider: OAuthProvider;
   oauth_subject: string;
+  password_hash?: string | null;
   role: UserRole;
+  is_active: number;
   session_token: string | null;
   created_at: string;
   updated_at: string;
@@ -24,6 +29,29 @@ export interface SafeUser {
   display_name: string;
   avatar_url: string | null;
   role: UserRole;
+  avatar_source?: AvatarSource;
+  bio?: string | null;
+}
+
+export interface ProfileUser extends SafeUser {
+  oauth_provider: OAuthProvider;
+  has_password: boolean;
+  bio: string | null;
+  avatar_source: AvatarSource;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface AdminUserRow {
+  id: number;
+  email: string;
+  display_name: string;
+  avatar_url: string | null;
+  role: UserRole;
+  oauth_provider: OAuthProvider;
+  is_active: number;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface Tag {
@@ -151,4 +179,40 @@ export interface EmailSignupRequest {
 export interface EmailLoginRequest {
   email: string;
   password: string;
+}
+
+export interface UpdateProfileRequest {
+  display_name?: string;
+  bio?: string | null;
+  avatar_url?: string | null;
+  avatar_source?: AvatarSource;
+}
+
+export interface ChangePasswordRequest {
+  current_password?: string;
+  new_password: string;
+}
+
+export interface ForgotPasswordRequest {
+  email: string;
+}
+
+export interface ResetPasswordRequest {
+  token: string;
+  new_password: string;
+}
+
+export interface RequestEmailChangeRequest {
+  new_email: string;
+  current_password?: string;
+}
+
+export interface AdminUpdateUserRequest {
+  role?: UserRole;
+  is_active?: boolean;
+}
+
+export interface UploadAvatarRequest {
+  image: string;
+  content_type: 'image/jpeg' | 'image/png' | 'image/webp';
 }
