@@ -1,24 +1,13 @@
-# build output
-dist/
-# generated types
-.astro/
-
-# dependencies
 node_modules/
-
-# logs
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-
-
-# environment variables
+dist/
+.astro/
+data/
 .env
-.env.production
-
-# macOS-specific files
+.env.*
+!.env.example
+cloudflare.txt
+ggl.txt
+client_secret_*.json
+*.sqlite
+.wrangler/
 .DS_Store
-
-# jetbrains setting folder
-.idea/
