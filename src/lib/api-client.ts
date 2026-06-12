@@ -145,6 +145,10 @@ export const api = {
     }),
   submitPost: (id: number) =>
     request<PostWithAuthor>(`/api/author/posts/${id}/submit`, { method: 'POST' }),
+  unpublishPost: (id: number) =>
+    request<PostWithAuthor>(`/api/author/posts/${id}/unpublish`, { method: 'POST' }),
+  deletePost: (id: number) =>
+    request<void>(`/api/author/posts/${id}`, { method: 'DELETE' }),
   adminQueue: () => request<Post[]>('/api/admin/queue'),
   adminPosts: (status?: string) =>
     request<Post[]>(status ? `/api/admin/posts?status=${encodeURIComponent(status)}` : '/api/admin/posts'),
