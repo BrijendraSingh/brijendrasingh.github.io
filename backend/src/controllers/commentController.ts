@@ -1,5 +1,6 @@
 import type { Request, Response, NextFunction } from 'express';
 import type { CreateCommentRequest, ReactionType, SetReactionRequest, UpdateCommentRequest } from '@mr-brij/shared';
+import { canModerateComments } from '@mr-brij/shared';
 import { dbAll, dbGet, dbRun } from '../config/database.api.js';
 import { AppError } from '../utils/AppError.js';
 import { getPublishedPostBySlug } from '../services/postService.js';
@@ -44,8 +45,8 @@ export async function listComments(req: Request, res: Response, next: NextFuncti
       res.status(404).json({ success: false, message: 'Post not found.' });
       return;
     }
-    const isAdmin = req.user?.role === 'admin';
-    const data = await listCommentsForPost(post.id, req.user?.id, isAdmin);
+    const canSeeHidden = req.user ? canModerateComments(req.user.role) : false;
+    const data = await listCommentsForPost(post.id, req.user?.id, canSeeHidden);
     res.json({ success: true, data });
   } catch (err) {
     next(err);
@@ -96,7 +97,7 @@ export async function updateComment(req: Request, res: Response, next: NextFunct
       [commentId]
     );
     if (!comment || comment.is_deleted) throw AppError.notFound('Comment not found.');
-    if (user.role !== 'admin' && comment.user_id !== user.id) {
+    if (!canModerateComments(user.role) && comment.user_id !== user.id) {
       throw AppError.forbidden('Cannot edit this comment.');
     }
     await dbRun(
@@ -124,7 +125,7 @@ export async function deleteComment(req: Request, res: Response, next: NextFunct
       [commentId]
     );
     if (!comment) throw AppError.notFound('Comment not found.');
-    if (user.role !== 'admin' && comment.user_id !== user.id) {
+    if (!canModerateComments(user.role) && comment.user_id !== user.id) {
       throw AppError.forbidden('Cannot delete this comment.');
     }
     await dbRun('UPDATE comments SET is_deleted = 1, updated_at = CURRENT_TIMESTAMP WHERE id = ?', [
@@ -183,7 +184,7 @@ export async function listAdminComments(req: Request, res: Response, next: NextF
        JOIN users u ON u.id = c.user_id
        JOIN posts p ON p.id = c.post_id
        WHERE c.is_deleted = 0 AND c.is_hidden = ?
-       ORDER BY c.updated_at DESC`,
+       ORDER BY COALESCE(c.updated_at, c.created_at) DESC`,
       [hiddenOnly ? 1 : 0]
     );
     res.json({ success: true, data: rows });

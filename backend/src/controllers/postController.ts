@@ -1,5 +1,11 @@
 import type { Request, Response, NextFunction } from 'express';
-import { APP_CONFIG, TextUtils, type CreatePostRequest, type UpdatePostRequest } from '@mr-brij/shared';
+import {
+  APP_CONFIG,
+  TextUtils,
+  canModeratePosts,
+  type CreatePostRequest,
+  type UpdatePostRequest,
+} from '@mr-brij/shared';
 import { dbAll, dbGet, dbRun } from '../config/database.api.js';
 import { AppError } from '../utils/AppError.js';
 import {
@@ -111,8 +117,8 @@ export async function updateAuthor(req: Request, res: Response, next: NextFuncti
   try {
     const user = req.user!;
     const postId = parseInt(req.params.id, 10);
-    const post = await assertPostAccess(postId, user.id, user.role === 'admin');
-    if (post.status === 'published' && user.role !== 'admin') {
+    const post = await assertPostAccess(postId, user.id, canModeratePosts(user.role));
+    if (post.status === 'published' && !canModeratePosts(user.role)) {
       throw AppError.forbidden('Published posts cannot be edited by authors.');
     }
     const body = req.body as UpdatePostRequest;
@@ -171,6 +177,17 @@ export async function deleteAuthor(req: Request, res: Response, next: NextFuncti
     }
     await dbRun('DELETE FROM posts WHERE id = ?', [postId]);
     res.json({ success: true, message: 'Post deleted.' });
+  } catch (err) {
+    next(err);
+  }
+}
+
+export async function getAdmin(req: Request, res: Response, next: NextFunction): Promise<void> {
+  try {
+    const postId = parseInt(req.params.id, 10);
+    const post = await getPostWithAuthor(postId);
+    if (!post) throw AppError.notFound('Post not found.');
+    res.json({ success: true, data: post });
   } catch (err) {
     next(err);
   }

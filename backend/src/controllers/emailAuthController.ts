@@ -6,6 +6,7 @@ import { AppError } from '../utils/AppError.js';
 import { getRedirectBase, isSecureRequest, setSessionCookie } from '../utils/authCookies.js';
 import { hashPassword, verifyPassword } from '../utils/password.js';
 import { generateSessionToken } from '../utils/session.js';
+import { SAFE_USER_SELECT } from '../utils/userQueries.js';
 
 function normalizeEmail(email: string): string {
   return email.trim().toLowerCase();
@@ -24,7 +25,7 @@ async function establishSession(req: Request, res: Response, userId: number): Pr
   );
   setSessionCookie(res, token, isSecureRequest(req));
   const user = await dbGet<SafeUser>(
-    'SELECT id, email, display_name, avatar_url, role FROM users WHERE id = ?',
+    `SELECT ${SAFE_USER_SELECT} FROM users WHERE id = ?`,
     [userId]
   );
   if (!user) throw AppError.badRequest('Failed to load user.');
@@ -67,8 +68,8 @@ export async function signup(req: Request, res: Response, next: NextFunction): P
     const passwordHash = await hashPassword(password);
     const role = isAdminEmail(email) ? 'admin' : 'reader';
     const result = await dbRun(
-      `INSERT INTO users (email, display_name, avatar_url, oauth_provider, oauth_subject, password_hash, role, session_token)
-       VALUES (?, ?, NULL, 'email', ?, ?, ?, NULL)`,
+      `INSERT INTO users (email, display_name, avatar_url, avatar_source, oauth_provider, oauth_subject, password_hash, role, session_token)
+       VALUES (?, ?, NULL, 'url', 'email', ?, ?, ?, NULL)`,
       [email, displayName, email, passwordHash, role]
     );
 
@@ -153,6 +154,7 @@ export function getSignupPage(req: Request, res: Response): void {
       <input id="signin-password" name="password" type="password" autocomplete="current-password" required />
       <button type="submit">Sign in with email</button>
     </form>
+    <p class="divider"><a href="/auth/forgot-password">Forgot password?</a></p>
   </div>
   <div id="signup" class="panel">
     <form id="signup-form">
