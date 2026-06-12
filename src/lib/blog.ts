@@ -1,11 +1,41 @@
-import { getCollection, type CollectionEntry } from "astro:content";
+import type { PostWithAuthor } from '@mr-brij/shared';
+import { getPublishedPostsForSite } from './server/posts.js';
 
-export type BlogPost = CollectionEntry<"blog">;
+export interface BlogListEntry {
+  id: string;
+  data: {
+    title: string;
+    description: string;
+    pubDate: Date;
+    updatedDate?: Date;
+    tags: string[];
+    draft: boolean;
+    commentsDisable: boolean;
+  };
+  body?: string;
+}
 
-export async function getPublishedPosts() {
-  return (await getCollection("blog"))
-    .filter((post) => !post.data.draft)
-    .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+export type BlogPost = BlogListEntry;
+
+function toEntry(post: PostWithAuthor): BlogListEntry {
+  return {
+    id: post.slug,
+    data: {
+      title: post.title,
+      description: post.description,
+      pubDate: new Date(post.published_at || post.pub_date || post.created_at),
+      updatedDate: post.updated_date ? new Date(post.updated_date) : undefined,
+      tags: post.tags?.map((t) => t.slug) ?? [],
+      draft: false,
+      commentsDisable: Boolean(post.comments_disabled),
+    },
+    body: post.body_md,
+  };
+}
+
+export async function getPublishedPosts(): Promise<BlogListEntry[]> {
+  const { posts } = await getPublishedPostsForSite({ limit: 100 });
+  return posts.map(toEntry);
 }
 
 export function postHref(id: string) {
@@ -17,8 +47,8 @@ export function estimateReadingTime(body: string): number {
   return Math.max(1, Math.ceil(words / 200));
 }
 
-export function groupPostsByYear(posts: BlogPost[]) {
-  const byYear = posts.reduce<Record<number, BlogPost[]>>((acc, post) => {
+export function groupPostsByYear(posts: BlogListEntry[]) {
+  const byYear = posts.reduce<Record<number, BlogListEntry[]>>((acc, post) => {
     const year = post.data.pubDate.getFullYear();
     (acc[year] ??= []).push(post);
     return acc;
@@ -29,15 +59,14 @@ export function groupPostsByYear(posts: BlogPost[]) {
     .map((year) => ({ year, posts: byYear[year] }));
 }
 
-export function getAllTags(posts: BlogPost[]): string[] {
+export function getAllTags(posts: BlogListEntry[]): string[] {
   const tagSet = new Set(posts.flatMap((post) => post.data.tags));
   return [...tagSet].sort((a, b) => a.localeCompare(b));
 }
 
-/** Human-readable tag label for UI (keeps slug in data attributes). */
 export function formatTagLabel(tag: string): string {
   return tag
-    .split("-")
+    .split('-')
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(" ");
+    .join(' ');
 }

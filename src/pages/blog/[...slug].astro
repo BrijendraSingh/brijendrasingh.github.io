@@ -1,29 +1,30 @@
 ---
-import { getCollection, render } from "astro:content";
+import { marked } from "marked";
 import PostLayout from "../../layouts/PostLayout.astro";
-import { estimateReadingTime } from "../../lib/blog";
+import { getPostBySlug } from "../../lib/server/posts";
 
-export async function getStaticPaths() {
-  const posts = await getCollection("blog", ({ data }) => !data.draft);
-  return posts.map((post) => ({
-    params: { slug: post.id },
-    props: { post },
-  }));
-}
+const slug = Astro.params.slug;
+if (!slug) return Astro.redirect("/blog/");
 
-const { post } = Astro.props;
-const { Content } = await render(post);
+const post = await getPostBySlug(slug);
+if (!post) return Astro.redirect("/404");
+
+const html = marked.parse(post.body_md, { async: false }) as string;
+const pubDate = new Date(post.published_at || post.pub_date || post.created_at);
+const updatedDate = post.updated_date ? new Date(post.updated_date) : undefined;
+const tags = post.tags?.map((t) => t.slug) ?? [];
 ---
 
 <PostLayout
-  title={post.data.title}
-  description={post.data.description}
-  pubDate={post.data.pubDate}
-  updatedDate={post.data.updatedDate}
-  tags={post.data.tags}
-  slug={post.id}
-  commentsDisable={post.data.commentsDisable}
-  readingTime={estimateReadingTime(post.body ?? "")}
+  title={post.title}
+  description={post.description}
+  pubDate={pubDate}
+  updatedDate={updatedDate}
+  tags={tags}
+  slug={post.slug}
+  commentsDisable={Boolean(post.comments_disabled)}
+  readingTime={post.reading_time ?? undefined}
+  postId={post.id}
 >
-  <Content />
+  <div set:html={html} />
 </PostLayout>

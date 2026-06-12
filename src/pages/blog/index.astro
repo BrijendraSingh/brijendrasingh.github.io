@@ -3,7 +3,6 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
 import ArchiveSidebar from "../../components/ArchiveSidebar.astro";
 import BlogFilterSidebar from "../../components/BlogFilterSidebar.astro";
 import BlogListItem from "../../components/BlogListItem.astro";
-import DisqusCountScript from "../../components/DisqusCountScript.astro";
 import {
   BLOG_CATEGORIES,
   BLOG_TYPES,
@@ -11,7 +10,15 @@ import {
 } from "../../lib/blog-filters";
 import { getPublishedPosts, postHref, estimateReadingTime } from "../../lib/blog";
 
+const searchQuery = Astro.url.searchParams.get("q") ?? "";
 const posts = await getPublishedPosts();
+const filtered = searchQuery
+  ? posts.filter(
+      (p) =>
+        p.data.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        p.data.description.toLowerCase().includes(searchQuery.toLowerCase())
+    )
+  : posts;
 ---
 
 <BaseLayout
@@ -20,25 +27,30 @@ const posts = await getPublishedPosts();
   layout="article"
 >
   <div class="blog-page">
+    {searchQuery && (
+      <p class="mb-4 text-sm text-slate-600">
+        Showing results for &ldquo;{searchQuery}&rdquo; ({filtered.length})
+      </p>
+    )}
     <div class="blog-list-layout">
       {
-        posts.length > 0 && (
+        filtered.length > 0 && (
           <div class="blog-filters-column">
-            <BlogFilterSidebar posts={posts} />
+            <BlogFilterSidebar posts={filtered} />
           </div>
         )
       }
 
       <div class="blog-primary">
         {
-          posts.length === 0 ? (
+          filtered.length === 0 ? (
             <p class="blog-page-empty">No posts yet. Check back soon.</p>
           ) : (
             <div class="blog-feed" role="feed" data-blog-feed>
               <p class="blog-filter-empty" data-blog-empty hidden>
                 No articles match the selected filters.
               </p>
-              {posts.map((post) => (
+              {filtered.map((post) => (
                 <BlogListItem
                   title={post.data.title}
                   description={post.data.description}
@@ -57,21 +69,20 @@ const posts = await getPublishedPosts();
       </div>
 
       {
-        posts.length > 0 && (
+        filtered.length > 0 && (
           <div class="blog-sidebar-column">
-            <ArchiveSidebar posts={posts} />
+            <ArchiveSidebar posts={filtered} />
           </div>
         )
       }
     </div>
 
     {
-      posts.length > 0 && (
+      filtered.length > 0 && (
         <div class="blog-archive-mobile">
-          <ArchiveSidebar posts={posts} />
+          <ArchiveSidebar posts={filtered} />
         </div>
       )
     }
   </div>
-  <DisqusCountScript />
 </BaseLayout>
