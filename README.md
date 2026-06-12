@@ -2,54 +2,41 @@
 
 Personal brand site for **Brijendra Singh** — software quality practitioner.
 
-**Live:** https://brijendrasingh.github.io/
+**Live:** https://mr-brij.bps-brijendra.workers.dev
 
-Built with [Astro](https://astro.build) + Tailwind CSS, deployed free on GitHub Pages.
+Full-stack blog on **Cloudflare Workers + D1** with **Astro 6 SSR**, Hono API, OAuth, and a D1-backed CMS.
 
 ## Local development
 
 ```bash
 npm install
-npm run dev      # http://localhost:4321
+npm run dev      # Astro :4321 + API :3001 (SQLite)
 npm run build
 npm run preview
 ```
 
-## Publish a new blog post
+## Deploy to production
 
 ```bash
-# 1. Copy the template
-cp src/content/blog/_template.md src/content/blog/my-post-slug.md
-
-# 2. Edit frontmatter + content (set draft: false when ready)
-
-# 3. Publish
-git add . && git commit -m "blog: my post title" && git push
+export CLOUDFLARE_API_TOKEN="$(cat ../cloudflare.txt)"
+npm run deploy:cloudflare
 ```
 
-GitHub Actions deploys to GitHub Pages automatically (~2 minutes).
+See **[DEPLOY.md](./DEPLOY.md)** for the full pipeline (build → migrate → seed → wrangler), CI setup, rollback, and troubleshooting.
 
-### Frontmatter
+Cloudflare one-time setup (D1, OAuth secrets): **[CLOUDFLARE.md](./CLOUDFLARE.md)**.
 
-```yaml
----
-title: "Your Post Title"
-description: "120-160 char SEO summary"
-pubDate: 2026-06-11
-tags: ["test-strategy", "automation"]
-draft: false
----
-```
+## Publish a new blog post
+
+1. Sign in → **Write** → **New article**
+2. Save draft → **Submit for review**
+3. Admin approves in **Admin** → moderation queue
+
+Legacy Markdown posts under `src/content/blog/` were imported into D1; new posts are authored in the CMS, not git.
 
 ## Site config
 
 All contact links live in `src/config/site.ts` — never hardcode in components.
-
-## GitHub Pages setup
-
-1. Push this repo to `BrijendraSingh/brijendrasingh.github.io`
-2. Settings → Pages → Source: **GitHub Actions**
-3. Enforce HTTPS: enabled
 
 ## Agent ecosystem
 

@@ -126,6 +126,8 @@ export CLOUDFLARE_API_TOKEN="$(cat ../cloudflare.txt)"
 npm run deploy:cloudflare
 ```
 
+**Full pipeline documentation:** [DEPLOY.md](./DEPLOY.md) — build steps, D1 migrate/seed, worker upload, CI vs manual, rollback, troubleshooting.
+
 ---
 
 ## Local development
