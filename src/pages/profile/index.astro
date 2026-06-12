@@ -1,0 +1,8 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ProfileSettings from '../../components/react/ProfileSettings';
+---
+
+<BaseLayout title="Profile" description="Manage your Mr Brij account." layout="article">
+  <ProfileSettings client:load />
+</BaseLayout>
