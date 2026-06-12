@@ -1,6 +1,7 @@
 -- Email/password sign-up alongside OAuth providers
 
-PRAGMA foreign_keys = OFF;
+-- D1 ignores PRAGMA foreign_keys=OFF; defer_foreign_keys prevents CASCADE on DROP TABLE users.
+PRAGMA defer_foreign_keys = ON;
 
 CREATE TABLE users_new (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -32,4 +33,4 @@ ALTER TABLE users_new RENAME TO users;
 CREATE INDEX IF NOT EXISTS idx_users_session_token ON users(session_token);
 CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
 
-PRAGMA foreign_keys = ON;
+PRAGMA defer_foreign_keys = OFF;
