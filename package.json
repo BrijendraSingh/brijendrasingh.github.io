@@ -1,24 +1,54 @@
 {
   "name": "mr-brij",
   "type": "module",
-  "version": "0.0.1",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "shared",
+    "backend",
+    "worker"
+  ],
   "engines": {
     "node": ">=22.12.0"
   },
   "scripts": {
-    "dev": "astro dev",
-    "build": "astro build",
+    "dev": "concurrently -n api,astro -c green,cyan \"npm run dev:api\" \"npm run dev:astro\"",
+    "dev:astro": "astro dev",
+    "dev:api": "npm run dev --workspace=backend",
+    "dev:worker": "npm run dev:worker --workspace=worker",
+    "build": "npm run build:shared && astro build",
+    "build:shared": "npm run build --workspace=shared",
+    "build:cloudflare": "npm run build:shared && astro build",
+    "deploy:cloudflare": "npm run build:cloudflare && rm -rf .wrangler/deploy && npm run db:migrate:remote --workspace=worker && npm run deploy --workspace=worker",
+    "db:migrate:local": "npm run db:migrate:local --workspace=worker",
+    "db:migrate:remote": "npm run db:migrate:remote --workspace=worker",
+    "seed": "node scripts/seed-posts-from-markdown.mjs",
     "preview": "astro preview",
     "astro": "astro"
   },
   "dependencies": {
+    "@astrojs/cloudflare": "^13.7.0",
     "@astrojs/mdx": "^6.0.3",
+    "@astrojs/react": "^4.4.2",
     "@astrojs/rss": "^4.0.18",
     "@astrojs/sitemap": "^3.7.3",
+    "@mr-brij/shared": "1.0.0",
     "@tailwindcss/vite": "^4.3.0",
+    "@uiw/react-md-editor": "^4.0.11",
     "astro": "^6.4.6",
+    "marked": "^15.0.12",
     "playwright": "^1.60.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
     "rehype-mermaid": "^3.0.0",
     "tailwindcss": "^4.3.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.0",
+    "@types/react-dom": "^18.3.0",
+    "better-sqlite3": "^11.10.0",
+    "concurrently": "^9.2.1",
+    "typescript": "5.9.3",
+    "wrangler": "^4.100.0"
   }
 }
