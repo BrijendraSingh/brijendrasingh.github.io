@@ -1,13 +1,17 @@
 import type {
+  AdminUserRow,
   ApiResponse,
   CommentListResponse,
   CommentWithMeta,
+  PaginationMeta,
   Post,
   PostWithAuthor,
+  ProfileUser,
   ReactionCounts,
   ReactionType,
   SafeUser,
   SetReactionRequest,
+  UserRole,
 } from '@mr-brij/shared';
 
 async function request<T>(path: string, options?: RequestInit): Promise<T> {
@@ -27,7 +31,14 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
 }
 
 export const api = {
-  me: () => request<SafeUser | null>('/api/auth/me'),
+  me: async () => {
+    const res = await fetch('/api/auth/me', { credentials: 'include' });
+    const json = (await res.json()) as ApiResponse<SafeUser | null>;
+    if (!res.ok || !json.success) {
+      throw new Error(json.message || `Request failed: ${res.status}`);
+    }
+    return json.data ?? null;
+  },
   logout: () => request<void>('/api/auth/logout', { method: 'POST' }),
   signup: (email: string, password: string, display_name?: string) =>
     request<SafeUser>('/api/auth/signup', {
@@ -39,6 +50,49 @@ export const api = {
       method: 'POST',
       body: JSON.stringify({ email, password }),
     }),
+  getProfile: () => request<ProfileUser>('/api/profile'),
+  updateProfile: (data: Record<string, unknown>) =>
+    request<ProfileUser>('/api/profile', { method: 'PATCH', body: JSON.stringify(data) }),
+  uploadAvatar: (image: string, content_type: 'image/jpeg' | 'image/png' | 'image/webp') =>
+    request<ProfileUser>('/api/profile/avatar', {
+      method: 'POST',
+      body: JSON.stringify({ image, content_type }),
+    }),
+  changePassword: (new_password: string, current_password?: string) =>
+    request<void>('/api/auth/change-password', {
+      method: 'POST',
+      body: JSON.stringify({ new_password, current_password }),
+    }),
+  forgotPassword: (email: string) =>
+    request<void>('/api/auth/forgot-password', {
+      method: 'POST',
+      body: JSON.stringify({ email }),
+    }),
+  resetPassword: (token: string, new_password: string) =>
+    request<void>('/api/auth/reset-password', {
+      method: 'POST',
+      body: JSON.stringify({ token, new_password }),
+    }),
+  requestEmailChange: (new_email: string, current_password?: string) =>
+    request<void>('/api/profile/email/request', {
+      method: 'POST',
+      body: JSON.stringify({ new_email, current_password }),
+    }),
+  adminUsers: (q?: string, role?: string, page = 1) => {
+    const params = new URLSearchParams({ page: String(page) });
+    if (q) params.set('q', q);
+    if (role) params.set('role', role);
+    return request<{ users: AdminUserRow[]; pagination: PaginationMeta }>(
+      `/api/admin/users?${params}`
+    );
+  },
+  updateAdminUser: (id: number, data: { role?: UserRole; is_active?: boolean }) =>
+    request<AdminUserRow>(`/api/admin/users/${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify(data),
+    }),
+  resetUserSessions: (id: number) =>
+    request<void>(`/api/admin/users/${id}/reset-sessions`, { method: 'POST' }),
   search: (q: string) =>
     request<{ query: string; posts: PostWithAuthor[]; total: number }>(
       `/api/search?q=${encodeURIComponent(q)}`
@@ -94,6 +148,12 @@ export const api = {
   adminQueue: () => request<Post[]>('/api/admin/queue'),
   adminPosts: (status?: string) =>
     request<Post[]>(status ? `/api/admin/posts?status=${encodeURIComponent(status)}` : '/api/admin/posts'),
+  getAdminPost: (id: number) => request<PostWithAuthor>(`/api/admin/posts/${id}`),
+  updateAdminPost: (id: number, data: Record<string, unknown>) =>
+    request<PostWithAuthor>(`/api/admin/posts/${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify(data),
+    }),
   deleteAdminPost: (id: number) =>
     request<void>(`/api/admin/posts/${id}`, { method: 'DELETE' }),
   publishPost: (id: number) =>
