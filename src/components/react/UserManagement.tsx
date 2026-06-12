@@ -79,7 +79,7 @@ export default function UserManagement() {
   }
 
   return (
-    <div className="p-6">
+    <div className="w-full">
       <AdminNav user={user} active="users" />
       <h1 className="mb-4 text-2xl font-semibold text-slate-900">User management</h1>
       {error && <p className="mb-4 rounded-md bg-red-50 px-3 py-2 text-sm text-red-800">{error}</p>}

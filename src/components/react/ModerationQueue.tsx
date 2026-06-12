@@ -93,10 +93,8 @@ export default function ModerationQueue() {
   };
 
   return (
-    <div className="mx-auto max-w-5xl p-4 sm:p-6">
+    <div className="w-full">
       <AdminNav user={user} active="queue" />
-      <h1 className="mb-2 text-2xl font-semibold text-slate-900">Admin</h1>
-      <p className="mb-8 text-sm text-slate-600">Review submissions and manage published posts.</p>
       {loadError && (
         <p className="mb-4 rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-900">
           {loadError}
