@@ -21,14 +21,22 @@ export default function AuthMenu() {
   }
 
   const showAdmin = canModeratePosts(user.role) || canManageUsers(user.role);
+  const pathname = typeof window !== 'undefined' ? window.location.pathname : '';
+  const onAdmin = pathname.startsWith('/admin');
 
   return (
     <div className="flex items-center gap-2">
-      <a href="/write/" className="btn btn-primary min-h-[36px] px-3 py-1 text-xs sm:text-sm">
+      <a
+        href="/write/"
+        className={`btn min-h-[36px] px-3 py-1 text-xs sm:text-sm ${onAdmin ? 'btn-ghost' : 'btn-primary'}`}
+      >
         Write
       </a>
       {showAdmin && (
-        <a href="/admin/" className="btn btn-ghost min-h-[36px] px-3 py-1 text-xs sm:text-sm">
+        <a
+          href="/admin/"
+          className={`btn min-h-[36px] px-3 py-1 text-xs sm:text-sm ${onAdmin ? 'btn-primary' : 'btn-ghost'}`}
+        >
           Admin
         </a>
       )}
