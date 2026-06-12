@@ -1,5 +1,6 @@
 import { useState, type ReactNode } from 'react';
 import type { CommentWithMeta, ReactionType, SafeUser } from '@mr-brij/shared';
+import { canModerateComments } from '@mr-brij/shared';
 import { api } from '../../lib/api-client';
 
 const REACTIONS: { type: ReactionType; label: string; icon: string }[] = [
@@ -91,7 +92,7 @@ export default function CommentItem({
   const [reactions, setReactions] = useState(comment.reactions);
 
   const isOwner = user?.id === comment.user_id;
-  const isAdmin = user?.role === 'admin';
+  const isAdmin = user ? canModerateComments(user.role) : false;
   const isHidden = Boolean(comment.is_hidden);
   const edited =
     comment.updated_at && new Date(comment.updated_at).getTime() > new Date(comment.created_at).getTime();

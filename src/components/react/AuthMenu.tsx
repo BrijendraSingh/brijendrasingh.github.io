@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import type { SafeUser } from '@mr-brij/shared';
+import { canManageUsers, canModeratePosts } from '@mr-brij/shared';
 import { api } from '../../lib/api-client';
 
 export default function AuthMenu() {
@@ -19,17 +20,32 @@ export default function AuthMenu() {
     );
   }
 
+  const showAdmin = canModeratePosts(user.role) || canManageUsers(user.role);
+
   return (
     <div className="flex items-center gap-2">
       <a href="/write/" className="btn btn-primary min-h-[36px] px-3 py-1 text-xs sm:text-sm">
         Write
       </a>
-      {user.role === 'admin' && (
+      {showAdmin && (
         <a href="/admin/" className="btn btn-ghost min-h-[36px] px-3 py-1 text-xs sm:text-sm">
           Admin
         </a>
       )}
-      <span className="hidden text-xs text-slate-600 sm:inline">{user.display_name}</span>
+      <a
+        href="/profile/"
+        className="flex items-center gap-1.5 rounded-md px-2 py-1 text-xs text-slate-600 hover:bg-slate-100 sm:text-sm"
+        title="Profile"
+      >
+        {user.avatar_url ? (
+          <img src={user.avatar_url} alt="" className="h-6 w-6 rounded-full object-cover" />
+        ) : (
+          <span className="flex h-6 w-6 items-center justify-center rounded-full bg-slate-200 text-[10px] text-slate-600">
+            {user.display_name.charAt(0).toUpperCase()}
+          </span>
+        )}
+        <span className="hidden sm:inline">{user.display_name}</span>
+      </a>
       <button
         type="button"
         className="btn btn-ghost min-h-[36px] px-2 py-1 text-xs"

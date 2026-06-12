@@ -27,14 +27,20 @@ export default function PostEditor({ postId, isAdmin = false }: Props) {
 
   useEffect(() => {
     if (!postId) return;
-    api.authorPosts().then((posts) => {
-      const found = posts.find((p) => p.id === postId);
-      if (found) {
+    const loadPost = isAdmin
+      ? api.getAdminPost(postId)
+      : api.authorPosts().then((posts) => {
+          const found = posts.find((p) => p.id === postId);
+          if (!found) throw new Error('Post not found.');
+          return found;
+        });
+    loadPost
+      .then((found) => {
         setPost(found);
-        setTagsInput('');
-      }
-    });
-  }, [postId]);
+        setTagsInput(found.tags?.map((t) => t.name).join(', ') ?? '');
+      })
+      .catch(() => setMessage('Failed to load article.'));
+  }, [postId, isAdmin]);
 
   if (user === undefined) return <p className="text-sm text-slate-500">Loading…</p>;
   if (!user) {
@@ -63,7 +69,9 @@ export default function PostEditor({ postId, isAdmin = false }: Props) {
         tag_names,
       };
       const saved = postId
-        ? await api.updatePost(postId, payload)
+        ? isAdmin
+          ? await api.updateAdminPost(postId, payload)
+          : await api.updatePost(postId, payload)
         : await api.createPost(payload);
       setPost(saved);
       setMessage('Saved.');

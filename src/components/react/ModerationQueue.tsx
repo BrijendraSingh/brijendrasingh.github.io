@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
-import type { Post } from '@mr-brij/shared';
-import { POST_STATUS_LABELS } from '@mr-brij/shared';
+import type { Post, SafeUser } from '@mr-brij/shared';
+import { POST_STATUS_LABELS, canModeratePosts } from '@mr-brij/shared';
 import { api } from '../../lib/api-client';
 import OAuthLogin from './OAuthLogin';
+import AdminNav from './AdminNav';
 
 type AdminPost = Post & { author_name?: string };
 type HiddenComment = {
@@ -15,25 +16,38 @@ type HiddenComment = {
 };
 
 export default function ModerationQueue() {
-  const [user, setUser] = useState<{ role: string } | null | undefined>(undefined);
+  const [user, setUser] = useState<SafeUser | null | undefined>(undefined);
   const [queue, setQueue] = useState<Post[]>([]);
   const [published, setPublished] = useState<AdminPost[]>([]);
   const [hiddenComments, setHiddenComments] = useState<HiddenComment[]>([]);
   const [note, setNote] = useState<Record<number, string>>({});
   const [deletingId, setDeletingId] = useState<number | null>(null);
+  const [loadError, setLoadError] = useState<string | null>(null);
 
   const load = async () => {
-    const me = await api.me();
+    setLoadError(null);
+    let me;
+    try {
+      me = await api.me();
+    } catch {
+      setUser(null);
+      return;
+    }
     setUser(me);
-    if (me?.role === 'admin') {
-      const [pending, live, hidden] = await Promise.all([
-        api.adminQueue(),
-        api.adminPosts('published'),
-        api.adminHiddenComments(),
-      ]);
-      setQueue(pending);
-      setPublished(live);
-      setHiddenComments(hidden);
+    if (!me || !canModeratePosts(me.role)) return;
+
+    const [pending, live, hidden] = await Promise.allSettled([
+      api.adminQueue(),
+      api.adminPosts('published'),
+      api.adminHiddenComments(),
+    ]);
+
+    setQueue(pending.status === 'fulfilled' ? pending.value : []);
+    setPublished(live.status === 'fulfilled' ? live.value : []);
+    setHiddenComments(hidden.status === 'fulfilled' ? hidden.value : []);
+
+    if ([pending, live, hidden].some((r) => r.status === 'rejected')) {
+      setLoadError('Some admin data could not be loaded. Try refreshing the page.');
     }
   };
 
@@ -50,8 +64,8 @@ export default function ModerationQueue() {
       </div>
     );
   }
-  if (user.role !== 'admin') {
-    return <p className="p-6 text-slate-600">Admin access only.</p>;
+  if (!canModeratePosts(user.role)) {
+    return <p className="p-6 text-slate-600">Moderator or admin access required.</p>;
   }
 
   const publish = async (id: number) => {
@@ -80,8 +94,14 @@ export default function ModerationQueue() {
 
   return (
     <div className="mx-auto max-w-5xl p-4 sm:p-6">
+      <AdminNav user={user} active="queue" />
       <h1 className="mb-2 text-2xl font-semibold text-slate-900">Admin</h1>
       <p className="mb-8 text-sm text-slate-600">Review submissions and manage published posts.</p>
+      {loadError && (
+        <p className="mb-4 rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-900">
+          {loadError}
+        </p>
+      )}
 
       <h2 className="mb-2 text-lg font-semibold text-slate-900">Moderation queue</h2>
       <p className="mb-4 text-sm text-slate-600">Review and publish guest submissions.</p>
