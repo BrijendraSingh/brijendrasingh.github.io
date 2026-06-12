@@ -1,0 +1,17 @@
+{
+  "name": "@mr-brij/shared",
+  "version": "1.0.0",
+  "description": "Shared types, constants, and utilities for Mr Brij blog",
+  "license": "MIT",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "clean": "rm -rf dist"
+  },
+  "devDependencies": {
+    "typescript": "5.9.3"
+  }
+}
