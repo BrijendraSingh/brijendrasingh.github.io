@@ -218,6 +218,7 @@ export function createHonoApp(nodeEnv = 'production'): Hono {
   );
   app.patch('/api/author/posts/:id', fromExpress(optionalSession, requireSession, requireWriter, posts.updateAuthor));
   app.post('/api/author/posts/:id/submit', fromExpress(optionalSession, requireSession, requireWriter, posts.submitAuthor));
+  app.post('/api/author/posts/:id/unpublish', fromExpress(optionalSession, requireSession, requireWriter, posts.unpublishAuthor));
   app.delete('/api/author/posts/:id', fromExpress(optionalSession, requireSession, requireWriter, posts.deleteAuthor));
 
   app.get(API_ENDPOINTS.ADMIN_POSTS, withPostModerator(posts.listAdmin));

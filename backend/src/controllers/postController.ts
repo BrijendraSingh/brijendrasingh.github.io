@@ -118,9 +118,6 @@ export async function updateAuthor(req: Request, res: Response, next: NextFuncti
     const user = req.user!;
     const postId = parseInt(req.params.id, 10);
     const post = await assertPostAccess(postId, user.id, canModeratePosts(user.role));
-    if (post.status === 'published' && !canModeratePosts(user.role)) {
-      throw AppError.forbidden('Published posts cannot be edited by authors.');
-    }
     const body = req.body as UpdatePostRequest;
     const readingTime = body.body_md ? TextUtils.readingTime(body.body_md) : post.reading_time;
     await dbRun(
@@ -172,11 +169,28 @@ export async function deleteAuthor(req: Request, res: Response, next: NextFuncti
     const user = req.user!;
     const postId = parseInt(req.params.id, 10);
     const post = await assertPostAccess(postId, user.id, false);
-    if (!['draft', 'rejected'].includes(post.status)) {
-      throw AppError.badRequest('Only draft or rejected posts can be deleted.');
-    }
     await dbRun('DELETE FROM posts WHERE id = ?', [postId]);
-    res.json({ success: true, message: 'Post deleted.' });
+    res.json({ success: true, message: `Deleted “${post.title}”.` });
+  } catch (err) {
+    next(err);
+  }
+}
+
+export async function unpublishAuthor(req: Request, res: Response, next: NextFunction): Promise<void> {
+  try {
+    const user = req.user!;
+    const postId = parseInt(req.params.id, 10);
+    const post = await assertPostAccess(postId, user.id, false);
+    if (post.status !== 'published') {
+      throw AppError.badRequest('Only published posts can be unpublished.');
+    }
+    await dbRun(
+      `UPDATE posts SET status = 'draft', updated_date = CURRENT_TIMESTAMP WHERE id = ?`,
+      [postId]
+    );
+    await recordReview(postId, user.id, 'changes_requested');
+    const updated = await getPostWithAuthor(postId);
+    res.json({ success: true, data: updated, message: 'Post unpublished.' });
   } catch (err) {
     next(err);
   }
