@@ -1,5 +1,5 @@
 INSERT OR IGNORE INTO users (id,email,display_name,avatar_url,oauth_provider,oauth_subject,role,session_token) VALUES (1,'bps.brijendra@gmail.com','Brijendra Singh',NULL,'google','seed-admin','admin',NULL);
-INSERT INTO posts (id,slug,title,description,body_md,status,author_id,published_by,pub_date,published_at,reading_time,comments_disabled) VALUES (1,'art-of-automation','Understanding Automation Test Layers','How to divide tests across the pyramid for faster feedback, lower cost, and fewer flaky UI suites — lessons from 14+ years in software quality.','
+INSERT OR IGNORE INTO posts (id,slug,title,description,body_md,status,author_id,published_by,pub_date,published_at,reading_time,comments_disabled) VALUES (1,'art-of-automation','Understanding Automation Test Layers','How to divide tests across the pyramid for faster feedback, lower cost, and fewer flaky UI suites — lessons from 14+ years in software quality.','
 > We cannot test everything — and we should not try to test everything on the UI automation layer. Variety of test layers exist where documented tests can be divided. This helps us reduce execution time, increase fast feedback, and shift left as a side effect.
 
 Picture this: your nightly regression suite takes four hours. Half the failures are environment noise. The other half point to a login API change that nobody noticed because the UI test only checked that the dashboard loaded. Sound familiar? The fix is rarely "add more E2E tests." It is choosing the **right layer** for each kind of check.
@@ -126,7 +126,7 @@ How does YOUR team split tests today? Are UI suites doing work that belongs lowe
 
 > Happy Testing :)
 ','published',1,1,'2021-11-22','2021-11-22',6,0);
-INSERT INTO posts (id,slug,title,description,body_md,status,author_id,published_by,pub_date,published_at,reading_time,comments_disabled) VALUES (2,'component-tests','End to End Testing using component strategy','Split E2E coverage across aggregation, API, and UI components for faster feedback, fewer flaky tests, and clearer failure analysis.','
+INSERT OR IGNORE INTO posts (id,slug,title,description,body_md,status,author_id,published_by,pub_date,published_at,reading_time,comments_disabled) VALUES (2,'component-tests','End to End Testing using component strategy','Split E2E coverage across aggregation, API, and UI components for faster feedback, fewer flaky tests, and clearer failure analysis.','
 > Component Testing is an approach where we divide automated tests into applicable layers and target specific responsibilities of various components — to reduce interdependencies, execution time, and logic complexity.
 
 If every business rule lives in a single UI journey, one slow warehouse query or one batch job running late turns your "E2E" into a lottery. Component strategy breaks the monolith **in your test design**, not necessarily in your architecture.
@@ -244,7 +244,7 @@ Pick one flaky UI test on YOUR project. Which layer could own the assertion inst
 
 > Happy Testing :)
 ','published',1,1,'2021-12-10','2021-12-10',5,0);
-INSERT INTO posts (id,slug,title,description,body_md,status,author_id,published_by,pub_date,published_at,reading_time,comments_disabled) VALUES (3,'defect-prevention-mindset','Keys to become an effective QA','Shift QA from defect detection to prevention — STORY KICKOFF, devbox, bug bash, and the 80-20 split that keeps releases on schedule.','
+INSERT OR IGNORE INTO posts (id,slug,title,description,body_md,status,author_id,published_by,pub_date,published_at,reading_time,comments_disabled) VALUES (3,'defect-prevention-mindset','Keys to become an effective QA','Shift QA from defect detection to prevention — STORY KICKOFF, devbox, bug bash, and the 80-20 split that keeps releases on schedule.','
 > Prevention is better than cure!
 >
 > Lets find out how shifting QA mindset from defect **detection** to defect **prevention** can help YOUR team achieve goals without causing testing bottlenecks.
@@ -367,7 +367,7 @@ Did this change how YOU see testing — hunter vs guardrail builder? Which ritua
 
 > Happy Testing :)
 ','published',1,1,'2022-05-25','2022-05-25',5,0);
-INSERT INTO posts (id,slug,title,description,body_md,status,author_id,published_by,pub_date,published_at,reading_time,comments_disabled) VALUES (4,'detox-e2e','Shift left in Mobile App Automation Testing','Detox gray-box E2E for React Native — sync with the app, one locator set for iOS and Android, and tests that run beside unit tests.','
+INSERT OR IGNORE INTO posts (id,slug,title,description,body_md,status,author_id,published_by,pub_date,published_at,reading_time,comments_disabled) VALUES (4,'detox-e2e','Shift left in Mobile App Automation Testing','Detox gray-box E2E for React Native — sync with the app, one locator set for iOS and Android, and tests that run beside unit tests.','
 > Tired of maintaining two locator sets for iOS and Android? Still inspecting mobile objects like it is 2015? **Detox** is a gray-box E2E solution that helps YOU shift left — run tests soon after a developer changes a feature, close to unit and integration tests.
 
 Detox will not fix a bad [mobile test strategy](/blog/mobile-test-strategy/). It **does** fix a class of pain: flaky "wait 5 seconds then tap" scripts that break when animation timing changes.
@@ -508,7 +508,7 @@ Are YOU on React Native today — what blocks you from running one E2E on every 
 
 > Happy Testing :)
 ','published',1,1,'2022-04-27','2022-04-27',4,0);
-INSERT INTO posts (id,slug,title,description,body_md,status,author_id,published_by,pub_date,published_at,reading_time,comments_disabled) VALUES (5,'engineered-test-data','Software Quality with Engineered test data','Engineer test data instead of cloning production — how we cut 500 GB to under 20 MB and batch runs from 8 hours to 15 minutes.','
+INSERT OR IGNORE INTO posts (id,slug,title,description,body_md,status,author_id,published_by,pub_date,published_at,reading_time,comments_disabled) VALUES (5,'engineered-test-data','Software Quality with Engineered test data','Engineer test data instead of cloning production — how we cut 500 GB to under 20 MB and batch runs from 8 hours to 15 minutes.','
 > What is one important factor in a project''s success? If you are a QA, your answer might be testing — but what makes testing **good**? Answers vary, yet one thing most of us relate to is **good test data**.
 
 Bad data does not always mean "wrong values." It often means **too much** of the right values, locked in a shared database nobody dares touch.
@@ -692,7 +692,7 @@ Pick one table that dominates storage in YOUR lower env. What is the smallest ro
 
 > Happy Testing :)
 ','published',1,1,'2021-11-07','2021-11-07',5,0);
-INSERT INTO posts (id,slug,title,description,body_md,status,author_id,published_by,pub_date,published_at,reading_time,comments_disabled) VALUES (6,'how-to-choose-tools','The Paradox of choice - Automation tool selection','Choose test automation tools with criteria that fit YOUR team — Pugh matrix, two team tales, and why more options can mean worse decisions.','
+INSERT OR IGNORE INTO posts (id,slug,title,description,body_md,status,author_id,published_by,pub_date,published_at,reading_time,comments_disabled) VALUES (6,'how-to-choose-tools','The Paradox of choice - Automation tool selection','Choose test automation tools with criteria that fit YOUR team — Pugh matrix, two team tales, and why more options can mean worse decisions.','
 > Finding the right tool for automation testing is crucial. Wrong selection causes rework, limits coverage, and burns trust when the suite flakes. Yet the market offers dozens of "best" frameworks — welcome to the **paradox of choice**.
 
 People usually pick the most popular tool in a category or whatever they used last project. That can work. It can also mean **critical compatibility issues** two quarters later when IE support, mobile WebView, or CI budget were never weighted.
@@ -806,7 +806,7 @@ Which criterion does YOUR team talk about most — and which one (price, maintai
 
 > Happy Testing :)
 ','published',1,1,'2021-10-21','2021-10-21',4,0);
-INSERT INTO posts (id,slug,title,description,body_md,status,author_id,published_by,pub_date,published_at,reading_time,comments_disabled) VALUES (7,'mobile-test-strategy','How to build Test Strategy for Mobile Applications','Build a mobile test strategy for YOUR app — stakeholders, device matrix, risk-based priorities, automation pyramid, and path to production.','
+INSERT OR IGNORE INTO posts (id,slug,title,description,body_md,status,author_id,published_by,pub_date,published_at,reading_time,comments_disabled) VALUES (7,'mobile-test-strategy','How to build Test Strategy for Mobile Applications','Build a mobile test strategy for YOUR app — stakeholders, device matrix, risk-based priorities, automation pyramid, and path to production.','
 > How do we build a mobile test strategy that covers device-specific conditions, device selection, and tool selection — **for this app**, not for a generic slide deck?
 
 Mobile is not "web but smaller." Interruptions, OS fragmentation, store gates, and fat fingers change what YOU test, automate, and ship.
@@ -1024,7 +1024,7 @@ What is the one device or OS version YOUR users complain about most? That belong
 
 > Happy Testing :)
 ','published',1,1,'2022-05-07','2022-05-07',7,0);
-INSERT INTO posts (id,slug,title,description,body_md,status,author_id,published_by,pub_date,published_at,reading_time,comments_disabled) VALUES (8,'testing-microservices','Microservices Test Strategy','A practical microservices test strategy — pyramid, contracts, doubles, and environments when service count and team count both grow.','
+INSERT OR IGNORE INTO posts (id,slug,title,description,body_md,status,author_id,published_by,pub_date,published_at,reading_time,comments_disabled) VALUES (8,'testing-microservices','Microservices Test Strategy','A practical microservices test strategy — pyramid, contracts, doubles, and environments when service count and team count both grow.','
 > Testing microservices is not easy when the number of services keeps increasing over time. Complexity grows — database errors, network latency, caching issues, service unavailability. Multiple teams building interconnected services add another layer of chaos.
 >
 > This problem cannot be solved by choosing an API testing tool and writing as many UI E2Es as possible. A proper thought process and test strategy is needed to understand dependencies and complexity in YOUR architecture.
@@ -1180,7 +1180,7 @@ What is the messiest dependency on your architecture diagram? Start testing ther
 
 > Happy Testing :)
 ','published',1,1,'2022-05-11','2022-05-11',6,0);
-INSERT INTO posts (id,slug,title,description,body_md,status,author_id,published_by,pub_date,published_at,reading_time,comments_disabled) VALUES (9,'who-tests-your-test','Who tests your test?','Flaky suites, low trust, and who owns test quality — practical signals and habits so your automation prevents defects instead of hiding them.','
+INSERT OR IGNORE INTO posts (id,slug,title,description,body_md,status,author_id,published_by,pub_date,published_at,reading_time,comments_disabled) VALUES (9,'who-tests-your-test','Who tests your test?','Flaky suites, low trust, and who owns test quality — practical signals and habits so your automation prevents defects instead of hiding them.','
 > DO YOU FEEL COMFORTABLE UPDATING YOUR TESTS?
 >
 > HOW IS THE CODE QUALITY OF YOUR TEST SUITE?

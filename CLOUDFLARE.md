@@ -103,7 +103,7 @@ Until secrets are set, `/auth/google` shows a setup page instead of redirecting 
 | ------- | ----- |
 | Root directory | `/` |
 | Build command | `npm run build:cloudflare` |
-| Deploy command | `npm run db:migrate:remote --workspace=worker && npm run deploy --workspace=worker` |
+| Deploy command | `npm run db:migrate:remote --workspace=worker && npm run db:seed:remote --workspace=worker && npm run deploy --workspace=worker` |
 
 Add encrypted `CLOUDFLARE_API_TOKEN` in dashboard Variables for CI.
 
@@ -112,9 +112,10 @@ Add encrypted `CLOUDFLARE_API_TOKEN` in dashboard Variables for CI.
 ```bash
 npm install
 npm run seed                    # local SQLite
-# For remote D1 after first deploy:
-cd worker && npx wrangler d1 execute mr-brij-db --remote --file=../scripts/seed-remote.sql
+npm run db:seed:remote          # remote D1 (idempotent; also runs on deploy)
 ```
+
+**D1 migration note:** Never use `PRAGMA foreign_keys = OFF` in migrations — D1 ignores it. Table swaps that `DROP TABLE users` must use `PRAGMA defer_foreign_keys = ON` or posts are CASCADE-deleted. `deploy:cloudflare` re-runs seed after migrate to restore canonical posts if wiped.
 
 ---
 
