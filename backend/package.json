@@ -1,0 +1,37 @@
+{
+  "name": "@mr-brij/backend",
+  "version": "1.0.0",
+  "license": "MIT",
+  "private": true,
+  "type": "module",
+  "main": "dist/index.js",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@mr-brij/shared": "1.0.0",
+    "compression": "1.8.1",
+    "cors": "2.8.6",
+    "dotenv": "16.6.1",
+    "express": "4.22.1",
+    "express-rate-limit": "8.2.1",
+    "express-validator": "7.3.1",
+    "helmet": "8.1.0",
+    "morgan": "1.10.1",
+    "better-sqlite3": "^11.10.0"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20250611.0",
+    "@types/better-sqlite3": "^7.6.13",
+    "@types/compression": "^1.7.5",
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.0",
+    "@types/morgan": "^1.9.9",
+    "@types/node": "^22.0.0",
+    "tsx": "^4.20.3",
+    "typescript": "5.9.3"
+  }
+}
