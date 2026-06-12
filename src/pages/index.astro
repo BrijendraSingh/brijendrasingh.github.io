@@ -2,7 +2,6 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import ArchiveSidebar from "../components/ArchiveSidebar.astro";
 import BlogListItem from "../components/BlogListItem.astro";
-import DisqusCountScript from "../components/DisqusCountScript.astro";
 import { site } from "../config/site";
 import { getPublishedPosts, postHref, estimateReadingTime } from "../lib/blog";
 
@@ -85,5 +84,4 @@ const latestPosts = posts.slice(0, 3);
       )
     }
   </div>
-  <DisqusCountScript />
 </BaseLayout>

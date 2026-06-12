@@ -3,7 +3,8 @@ import BaseLayout from "./BaseLayout.astro";
 import ArchiveSidebar from "../components/ArchiveSidebar.astro";
 import PostMeta from "../components/PostMeta.astro";
 import PostSidebar from "../components/PostSidebar.astro";
-import DisqusComments from "../components/DisqusComments.astro";
+import EngagementBar from "../components/react/EngagementBar";
+import CommentThread from "../components/react/CommentThread";
 import { getPublishedPosts } from "../lib/blog";
 
 interface Props {
@@ -15,6 +16,7 @@ interface Props {
   slug: string;
   commentsDisable?: boolean;
   readingTime?: number;
+  postId?: number;
 }
 
 const {
@@ -58,7 +60,12 @@ const posts = await getPublishedPosts();
           <div class="prose-content">
             <slot />
           </div>
-          {!commentsDisable && <DisqusComments slug={slug} />}
+          {!commentsDisable && (
+            <>
+              <EngagementBar client:visible slug={slug} />
+              <CommentThread client:visible slug={slug} />
+            </>
+          )}
         </div>
       </div>
 

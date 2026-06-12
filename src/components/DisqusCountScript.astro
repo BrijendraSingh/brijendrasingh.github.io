@@ -1,15 +1,3 @@
 ---
-import { site } from "../config/site";
-
-if (!site.disqus.enabled || !site.disqus.shortname) {
-  return null;
-}
-
-const { shortname } = site.disqus;
+/** @deprecated Disqus removed — native comments via CommentThread. */
 ---
-
-<script
-  is:inline
-  id="dsq-count-scr"
-  src={`https://${shortname}.disqus.com/count.js`}
-  async></script>
