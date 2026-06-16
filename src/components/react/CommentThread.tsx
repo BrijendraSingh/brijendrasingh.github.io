@@ -48,7 +48,7 @@ export default function CommentThread({ slug }: Props) {
   };
 
   return (
-    <section className="comment-thread border-t border-slate-200 py-5" aria-label="Comments">
+    <section className="comment-thread border-t border-slate-200 py-5" id="comments" aria-label="Comments">
       <h2 className="mb-3 text-base font-semibold text-slate-900">
         Comments {total > 0 && <span className="font-normal text-slate-500">({total})</span>}
       </h2>

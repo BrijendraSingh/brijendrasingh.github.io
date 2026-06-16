@@ -394,6 +394,34 @@ body {
   @apply text-slate-300;
 }
 
+.blog-list-item-engagement {
+  @apply -mt-1 flex flex-wrap items-center gap-3 pb-6;
+}
+
+.blog-feed--compact .blog-list-item-engagement {
+  @apply pb-4;
+}
+
+.blog-list-item-engagement-skeleton {
+  @apply inline-block h-4 w-40 rounded bg-slate-100;
+}
+
+.blog-list-item-engagement-stat {
+  @apply inline-flex items-center gap-1 text-xs text-slate-400 transition-colors hover:text-blue-700;
+}
+
+.blog-list-item-engagement-stat svg {
+  @apply h-3.5 w-3.5 shrink-0;
+}
+
+.blog-list-item-engagement-stat--has-count {
+  @apply text-slate-500;
+}
+
+.blog-list-item-engagement--active .blog-list-item-engagement-stat--has-count {
+  @apply text-slate-600;
+}
+
 /* Archive — sidebar + standalone page */
 .archive-sidebar-title {
   @apply text-sm font-semibold uppercase tracking-wide text-slate-900;

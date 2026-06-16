@@ -1,5 +1,6 @@
 ---
 import DisqusCommentCount from "./DisqusCommentCount.astro";
+import EngagementStats from "./react/EngagementStats";
 import { formatTagLabel } from "../lib/blog";
 
 interface Props {
@@ -11,6 +12,7 @@ interface Props {
   slug: string;
   readingTime?: number;
   showComments?: boolean;
+  showEngagement?: boolean;
   filterTypes?: string;
   filterCategories?: string;
 }
@@ -24,6 +26,7 @@ const {
   slug,
   readingTime,
   showComments = false,
+  showEngagement = true,
   filterTypes = "",
   filterCategories = "",
 } = Astro.props;
@@ -77,4 +80,9 @@ const primaryTag = tags[0];
       </p>
     </div>
   </a>
+  {
+    showEngagement && (
+      <EngagementStats client:visible slug={slug} href={href} />
+    )
+  }
 </article>

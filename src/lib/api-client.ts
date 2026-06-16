@@ -6,6 +6,7 @@ import type {
   PaginationMeta,
   Post,
   PostWithAuthor,
+  PostEngagementStats,
   ProfileUser,
   ReactionCounts,
   ReactionType,
@@ -99,6 +100,10 @@ export const api = {
     ),
   getReactions: (slug: string) =>
     request<ReactionCounts>(`/api/posts/${slug}/reactions`),
+  getEngagementStats: (slugs: string[]) => {
+    const params = new URLSearchParams({ slugs: slugs.join(',') });
+    return request<Record<string, PostEngagementStats>>(`/api/posts/engagement-stats?${params}`);
+  },
   setReaction: (slug: string, type: SetReactionRequest['type']) =>
     request<ReactionCounts>(`/api/posts/${slug}/reactions`, {
       method: 'PUT',
