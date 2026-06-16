@@ -35,13 +35,15 @@ const { title, description, type, layout = "default", robots } = Astro.props;
   </head>
   <body class="site-shell">
     <Header />
-    <main
-      class:list={[
-        "site-main mx-auto w-full px-4 py-10 sm:px-6 lg:px-8",
-        layout === "article" ? "max-w-7xl" : "max-w-6xl",
-      ]}
-    >
-      <slot />
+    <main class="site-main w-full">
+      <div
+        class:list={[
+          "mx-auto w-full px-4 py-10 sm:px-6 lg:px-8",
+          layout === "article" ? "max-w-7xl" : "max-w-6xl",
+        ]}
+      >
+        <slot />
+      </div>
     </main>
     <Footer />
     <HashScrollManager client:load />
