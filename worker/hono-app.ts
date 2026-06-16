@@ -161,6 +161,10 @@ export function createHonoApp(nodeEnv = 'production'): Hono {
 
   app.get(API_ENDPOINTS.POSTS, fromExpress(optionalSession, posts.listPublic));
   app.get(API_ENDPOINTS.SEARCH, fromExpress(optionalSession, posts.searchPublic));
+  app.get(
+    '/api/posts/engagement-stats',
+    fromExpress(optionalSession, reactions.getBatchEngagementStats)
+  );
   app.get('/api/posts/:slug', fromExpress(optionalSession, posts.getPublicBySlug));
   app.get('/api/posts/:slug/comments', fromExpress(optionalSession, comments.listComments));
   app.get('/api/posts/:slug/reactions', fromExpress(optionalSession, reactions.getReactions));

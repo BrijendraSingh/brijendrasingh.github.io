@@ -1,6 +1,7 @@
 import type { Request, Response, NextFunction } from 'express';
 import type { ReactionType, SetReactionRequest } from '@mr-brij/shared';
 import { dbAll, dbGet, dbRun } from '../config/database.api.js';
+import { getEngagementStatsBySlugs } from '../services/engagementService.js';
 import { getPublishedPostBySlug } from '../services/postService.js';
 import { AppError } from '../utils/AppError.js';
 
@@ -19,6 +20,28 @@ async function getCounts(postId: number, userId?: number) {
     counts.user_reaction = userReaction?.type ?? null;
   }
   return counts;
+}
+
+export async function getBatchEngagementStats(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> {
+  try {
+    const raw = req.query.slugs;
+    const slugs =
+      typeof raw === 'string'
+        ? raw.split(',').map((slug) => slug.trim()).filter(Boolean)
+        : Array.isArray(raw)
+          ? raw.flatMap((value) =>
+              typeof value === 'string' ? value.split(',').map((slug) => slug.trim()) : []
+            ).filter(Boolean)
+          : [];
+    const data = await getEngagementStatsBySlugs(slugs);
+    res.json({ success: true, data });
+  } catch (err) {
+    next(err);
+  }
 }
 
 export async function getReactions(req: Request, res: Response, next: NextFunction): Promise<void> {
