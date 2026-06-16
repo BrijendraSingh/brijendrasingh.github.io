@@ -17,6 +17,7 @@ export type {
   CommentWithMeta,
   CommentListResponse,
   ReactionCounts,
+  PostEngagementStats,
   PaginationMeta,
   ApiResponse,
   CreatePostRequest,

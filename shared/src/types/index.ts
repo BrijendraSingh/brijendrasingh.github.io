@@ -118,6 +118,13 @@ export interface ReactionCounts {
   user_reaction: ReactionType | null;
 }
 
+export interface PostEngagementStats {
+  like: number;
+  thumbs_up: number;
+  thumbs_down: number;
+  comments: number;
+}
+
 export interface PaginationMeta {
   page: number;
   limit: number;
