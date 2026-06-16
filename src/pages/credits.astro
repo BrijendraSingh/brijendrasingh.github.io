@@ -1,0 +1,35 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import ContactLinks from "../components/ContactLinks.astro";
+import { site } from "../config/site";
+---
+
+<BaseLayout title="Credits" description="Credits" robots="noindex, nofollow">
+  <h1 class="text-3xl font-bold text-slate-900">Credits</h1>
+  <p class="mt-2 text-lg text-slate-600">Built by</p>
+
+  <div class="prose-content mt-8">
+    <p>
+      {site.brand} is maintained by {site.maintainer.name}.
+    </p>
+    <p>{site.maintainer.bio}</p>
+  </div>
+
+  <section class="mt-10">
+    <h2 class="text-xl font-semibold text-slate-900">Topics</h2>
+    <ul class="mt-4 grid gap-2 sm:grid-cols-2">
+      {
+        site.topics.map((item) => (
+          <li class="rounded-lg border border-slate-200 bg-white px-4 py-3 text-slate-700">
+            {item}
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  <section class="mt-10">
+    <h2 class="text-xl font-semibold text-slate-900">Contact</h2>
+    <ContactLinks class="mt-4" variant="maintainer" />
+  </section>
+</BaseLayout>

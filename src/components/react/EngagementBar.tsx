@@ -61,10 +61,16 @@ export default function EngagementBar({ slug }: Props) {
     }
   };
 
-  if (!counts) return <div className="engagement-bar py-4 text-sm text-slate-500">Loading…</div>;
+  if (!counts) {
+    return (
+      <div id="engagement" className="engagement-bar border-t border-slate-200 py-4 text-sm text-slate-500">
+        Loading…
+      </div>
+    );
+  }
 
   return (
-    <div className="engagement-bar border-t border-slate-200 py-6">
+    <div id="engagement" className="engagement-bar border-t border-slate-200 py-6">
       <div className="flex flex-wrap items-center gap-3">
         {REACTIONS.map(({ type, label, icon }) => (
           <button

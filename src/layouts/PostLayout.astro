@@ -4,6 +4,7 @@ import ArchiveSidebar from "../components/ArchiveSidebar.astro";
 import PostMeta from "../components/PostMeta.astro";
 import PostSidebar from "../components/PostSidebar.astro";
 import EngagementBar from "../components/react/EngagementBar";
+import EngagementHighlights from "../components/react/EngagementHighlights";
 import CommentThread from "../components/react/CommentThread";
 import { getPublishedPosts } from "../lib/blog";
 
@@ -70,11 +71,21 @@ const posts = await getPublishedPosts();
       </div>
 
       <div class="post-sidebar-column">
+        {
+          !commentsDisable && (
+            <EngagementHighlights client:visible slug={slug} />
+          )
+        }
         <ArchiveSidebar posts={posts} currentSlug={slug} />
       </div>
     </div>
 
     <div class="post-archive-mobile">
+      {
+        !commentsDisable && (
+          <EngagementHighlights client:visible slug={slug} />
+        )
+      }
       <ArchiveSidebar posts={posts} currentSlug={slug} />
     </div>
   </article>

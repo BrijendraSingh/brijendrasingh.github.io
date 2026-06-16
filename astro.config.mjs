@@ -12,6 +12,9 @@ export default defineConfig({
   site: 'https://mr-brij.bps-brijendra.workers.dev',
   base: '/',
   output: 'server',
+  redirects: {
+    '/resume': '/',
+  },
   adapter: cloudflare({
     platformProxy: {
       enabled: true,
@@ -41,5 +44,11 @@ export default defineConfig({
     },
   },
 
-  integrations: [react(), sitemap(), mdx()],
+  integrations: [
+    react(),
+    sitemap({
+      filter: (page) => !page.includes('/credits'),
+    }),
+    mdx(),
+  ],
 });

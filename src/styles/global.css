@@ -34,6 +34,11 @@ body {
   -webkit-overflow-scrolling: touch;
 }
 
+#engagement,
+#comments {
+  scroll-margin-top: 1.5rem;
+}
+
 .prose-content {
   font-family: var(--font-serif);
   @apply leading-relaxed text-slate-800;
@@ -420,6 +425,43 @@ body {
 
 .blog-list-item-engagement--active .blog-list-item-engagement-stat--has-count {
   @apply text-slate-600;
+}
+
+/* Post — reader engagement sidebar */
+.engagement-sidebar {
+  @apply mb-6 border-b border-slate-200 pb-6;
+}
+
+.engagement-sidebar-title {
+  @apply text-sm font-semibold uppercase tracking-wide text-slate-900;
+}
+
+.engagement-sidebar-loading {
+  @apply mt-3;
+}
+
+.engagement-sidebar-skeleton {
+  @apply block h-7 w-36 rounded bg-slate-100;
+}
+
+.engagement-sidebar-stats {
+  @apply mt-3 flex flex-wrap items-center gap-2;
+}
+
+.engagement-sidebar-stat {
+  @apply inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs text-slate-400 transition-colors hover:bg-slate-50 hover:text-blue-700;
+}
+
+.engagement-sidebar-stat svg {
+  @apply h-3.5 w-3.5 shrink-0;
+}
+
+.engagement-sidebar-stat--active {
+  @apply text-slate-600;
+}
+
+.post-archive-mobile .engagement-sidebar {
+  @apply mb-8 border-b-0 pb-0;
 }
 
 /* Archive — sidebar + standalone page */

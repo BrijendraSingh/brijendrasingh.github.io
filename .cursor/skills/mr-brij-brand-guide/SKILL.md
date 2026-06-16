@@ -1,12 +1,10 @@
 ---
 name: mr-brij-brand-guide
 description: >-
-  Brand and voice guide for Mr. Brij (Brijendra Singh) personal website. Enforces
-  software quality practitioner positioning, contact config in src/config/site.ts,
-  professional minimal design, and correct social links. Use when writing About copy,
-  hero text, resume content, blog intros, SEO descriptions, or reviewing any UI/copy
-  for brand alignment. Also use when adding contact links, LinkedIn, taglines, or
-  checking the site presents 14+ years QA experience credibly.
+  Brand and voice guide for Mr. Brij community blog platform. Enforces community-first
+  positioning, platform vs maintainer config in src/config/site.ts, professional minimal
+  design, and correct contact links. Use when writing About copy, hero text, credits page,
+  blog intros, SEO descriptions, or reviewing any UI/copy for brand alignment.
 recommended_model_tier: inherit
 ---
 
@@ -16,21 +14,27 @@ recommended_model_tier: inherit
 
 | Field | Value |
 |-------|-------|
-| Legal name | Brijendra Singh |
 | Brand | Mr. Brij |
-| Role | Software Quality / QA practitioner |
-| Experience | 14+ years in software industry |
-| Focus | Software quality practices from real-world experience |
-| Tagline | Software Quality Practitioner |
+| Positioning | Community blog for software quality practitioners |
+| Tagline | Community for software quality |
+| Maintainer | Brijendra Singh (credits page only) |
+
+## Public vs hidden surfaces
+
+| Surface | Content |
+|---------|---------|
+| Home, Blog, About, Header, Footer | Platform voice — no maintainer name |
+| `/credits/` | Maintainer bio and personal contact (noindex, footer easter egg) |
 
 ## Voice
 
-- **Professional** — credible for senior practitioners and hiring managers
+- **Community-first** — written for practitioners, open to contributors
+- **Professional** — credible for test leads, QAs, engineers, managers
 - **Practical** — lessons from experience, not theory-only
 - **Approachable** — invite discussion, not lecturing
 - **Avoid** — hype, buzzword soup, generic AI aesthetics, flashy design
 
-## Expertise Pillars (use on About, tags, resume)
+## Topics (use on About, tags)
 
 1. Test Strategy
 2. Test Automation
@@ -43,19 +47,8 @@ recommended_model_tier: inherit
 
 **Never hardcode** contact URLs in components. Always import `src/config/site.ts`:
 
-```typescript
-export const site = {
-  name: "Brijendra Singh",
-  brand: "Mr. Brij",
-  tagline: "Software Quality Practitioner",
-  description: "14+ years in software quality — test strategy, automation, and quality culture.",
-  url: "https://brijendrasingh.github.io",
-  email: "bps.brijendra@gmail.com",
-  github: "https://github.com/brijendrasingh",
-  linkedin: "https://www.linkedin.com/in/brijendrapsingh/",
-  copyrightYear: 2026,
-} as const;
-```
+- `site.platform` — footer and public About (GitHub repo, platform email)
+- `site.maintainer` — credits page only (personal GitHub, LinkedIn, email)
 
 Full template: [references/site-config.ts](../../../references/site-config.ts)
 
@@ -64,23 +57,24 @@ Full template: [references/site-config.ts](../../../references/site-config.ts)
 - Clean typography, generous whitespace
 - Slate/navy palette, blue accent sparingly
 - Mobile-first, accessible (contrast, semantic HTML, alt text)
-- No stock-photo hero clichés; optional professional headshot only
+- No stock-photo hero clichés
 
 ## Blog Content Guidelines
 
 - Write for practitioners: test leads, QAs, engineers, managers
 - Prefer concrete examples from testing work
-- Tags should reflect expertise pillars
-- SEO descriptions: 120–160 chars, include topic + practitioner angle
+- Tags should reflect topic pillars
+- SEO descriptions: 120–160 chars, community angle (not personal byline)
 
 ## Review Checklist
 
 Before merging copy or design changes:
 
-- [ ] Contact links come from `site.ts` only
-- [ ] LinkedIn is `https://www.linkedin.com/in/brijendrapsingh/`
+- [ ] Public pages use platform copy from `site.ts` — no maintainer name on home/about
+- [ ] Contact links come from `site.platform` or `site.maintainer` only
+- [ ] Maintainer LinkedIn is `https://www.linkedin.com/in/brijendrapsingh/` (credits only)
 - [ ] Tone is professional, not salesy
-- [ ] Positioning reflects 14+ years experience
 - [ ] Design stays minimal and readable
+- [ ] No Resume nav link or page
 
 Delegate visual review to `brand-alignment-reviewer` subagent when unsure.

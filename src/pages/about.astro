@@ -3,50 +3,52 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import ContactLinks from "../components/ContactLinks.astro";
 import { site } from "../config/site";
 
-const expertise = [
-  "Test Strategy",
-  "Test Automation",
-  "Mobile Testing",
-  "API & Microservices Testing",
-  "Quality Culture & Defect Prevention",
-  "CI/CD Quality Gates",
-];
-
-const personSchema = {
+const organizationSchema = {
   "@context": "https://schema.org",
-  "@type": "Person",
-  name: site.name,
+  "@type": "WebSite",
+  name: site.brand,
   url: site.url,
-  jobTitle: site.tagline,
   description: site.description,
-  sameAs: [site.linkedin, site.github],
+  about: site.tagline,
 };
 ---
 
-<BaseLayout title="About" description={`About ${site.name} — ${site.tagline}`}>
-  <script type="application/ld+json" set:html={JSON.stringify(personSchema)} />
+<BaseLayout
+  title="About"
+  description={`About ${site.brand} — community blog for software quality practitioners.`}
+>
+  <script type="application/ld+json" set:html={JSON.stringify(organizationSchema)} />
 
-  <h1 class="text-3xl font-bold text-slate-900">About</h1>
+  <h1 class="text-3xl font-bold text-slate-900">About {site.brand}</h1>
   <p class="mt-2 text-lg text-slate-600">{site.tagline}</p>
 
   <div class="prose-content mt-8">
     <p>
-      I'm {site.name}, a software quality practitioner with over 14 years in the
-      software industry. Through {site.brand}, I share practical lessons on test
-      strategy, automation, and building a quality mindset in engineering teams.
+      We believe quality improves when practitioners share real lessons, not theory alone.
+      {site.brand} is an open platform: read, react, and contribute articles reviewed by the
+      community.
     </p>
     <p>
-      My writing draws from hands-on experience across mobile applications,
-      microservices, and large-scale test automation — always focused on what helps
-      teams ship with confidence.
+      The site is for test leads, QAs, engineers, and managers who want practical guidance on
+      test strategy, automation, and building quality into software teams.
     </p>
   </div>
 
   <section class="mt-10">
-    <h2 class="text-xl font-semibold text-slate-900">Core expertise</h2>
+    <h2 class="text-xl font-semibold text-slate-900">How to contribute</h2>
+    <ol class="mt-4 list-decimal space-y-2 pl-5 text-slate-700">
+      <li>Sign in with your preferred account.</li>
+      <li>Open <strong>Write</strong> and draft your article.</li>
+      <li>Submit it for review when you are ready.</li>
+      <li>After approval, your article is published for the community.</li>
+    </ol>
+  </section>
+
+  <section class="mt-10">
+    <h2 class="text-xl font-semibold text-slate-900">Topics we cover</h2>
     <ul class="mt-4 grid gap-2 sm:grid-cols-2">
       {
-        expertise.map((item) => (
+        site.topics.map((item) => (
           <li class="rounded-lg border border-slate-200 bg-white px-4 py-3 text-slate-700">
             {item}
           </li>
@@ -56,7 +58,20 @@ const personSchema = {
   </section>
 
   <section class="mt-10">
+    <h2 class="text-xl font-semibold text-slate-900">Community norms</h2>
+    <ul class="mt-4 list-disc space-y-2 pl-5 text-slate-700">
+      <li>Share practical lessons from real testing work.</li>
+      <li>Prefer concrete examples over buzzwords and hype.</li>
+      <li>Write for practitioners — clear, respectful, and useful.</li>
+      <li>Engage thoughtfully in comments and discussions.</li>
+    </ul>
+  </section>
+
+  <section class="mt-10">
     <h2 class="text-xl font-semibold text-slate-900">Contact</h2>
-    <ContactLinks class="mt-4" />
+    <p class="mt-2 text-sm text-slate-600">
+      Questions about the platform or contributing? Reach out via the links below.
+    </p>
+    <ContactLinks class="mt-4" variant="platform" />
   </section>
 </BaseLayout>

@@ -82,4 +82,4 @@ Set `draft: true` to work in progress. Astro content collections filter drafts i
 
 - Verify post appears at `/blog/{slug}/`
 - Check RSS at `/rss.xml`
-- Optional: share on LinkedIn (`site.linkedin` from config)
+- Optional: share on LinkedIn (`site.maintainer.linkedin` from config — credits context only)

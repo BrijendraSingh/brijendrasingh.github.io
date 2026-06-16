@@ -3,15 +3,31 @@ import { site } from "../config/site";
 
 interface Props {
   class?: string;
+  variant?: "platform" | "maintainer";
 }
 
-const { class: className = "" } = Astro.props;
+const { class: className = "", variant = "platform" } = Astro.props;
 
-const links = [
-  { href: site.github, label: "GitHub", external: true },
-  { href: site.linkedin, label: "LinkedIn", external: true },
-  { href: `mailto:${site.email}`, label: "Email", external: false },
+const platformLinks = [
+  { href: site.platform.github, label: "GitHub", external: true },
+  {
+    href: `mailto:${site.platform.contactEmail}`,
+    label: "Email",
+    external: false,
+  },
 ];
+
+const maintainerLinks = [
+  { href: site.maintainer.github, label: "GitHub", external: true },
+  { href: site.maintainer.linkedin, label: "LinkedIn", external: true },
+  {
+    href: `mailto:${site.maintainer.email}`,
+    label: "Email",
+    external: false,
+  },
+];
+
+const links = variant === "maintainer" ? maintainerLinks : platformLinks;
 ---
 
 <ul class:list={["flex flex-wrap gap-3 text-xs sm:text-sm", className]}>

@@ -3,6 +3,7 @@ import "../styles/global.css";
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
 import SEO from "../components/SEO.astro";
+import HashScrollManager from "../components/react/HashScrollManager";
 import { site } from "../config/site";
 
 interface Props {
@@ -10,9 +11,10 @@ interface Props {
   description?: string;
   type?: "website" | "article";
   layout?: "default" | "article";
+  robots?: string;
 }
 
-const { title, description, type, layout = "default" } = Astro.props;
+const { title, description, type, layout = "default", robots } = Astro.props;
 ---
 
 <!doctype html>
@@ -28,6 +30,7 @@ const { title, description, type, layout = "default" } = Astro.props;
       rel="stylesheet"
     />
     <title>{title ? `${title} | ${site.brand}` : site.brand}</title>
+    {robots && <meta name="robots" content={robots} />}
     <SEO title={title ?? site.brand} description={description ?? site.description} type={type} />
   </head>
   <body class="site-shell">
@@ -41,5 +44,6 @@ const { title, description, type, layout = "default" } = Astro.props;
       <slot />
     </main>
     <Footer />
+    <HashScrollManager client:load />
   </body>
 </html>

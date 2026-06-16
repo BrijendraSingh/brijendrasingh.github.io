@@ -10,9 +10,10 @@ Read `.cursor/skills/mr-brij-brand-guide/SKILL.md` when editing copy or contact 
 
 ## Non-Negotiables
 
-- Brand: **Mr. Brij** — Brijendra Singh, Software Quality Practitioner
-- LinkedIn: `https://www.linkedin.com/in/brijendrapsingh/`
-- All contact URLs in `src/config/site.ts` only
+- Brand: **Mr. Brij** — community blog for software quality practitioners
+- Public surfaces use `site.brand`, `site.tagline`, `site.description` — not maintainer name
+- Maintainer identity (`site.maintainer`) only on `/credits/` (noindex, footer easter egg)
+- Platform contact links from `site.platform` in footer and public About
 - Design: professional & minimal — credibility over flash
 
 ## Before Launch
